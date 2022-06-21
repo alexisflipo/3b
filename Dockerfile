@@ -1,9 +1,19 @@
-FROM tiangolo/uwsgi-nginx:python3.8-alpine
+FROM ubuntu:20.04
 
-RUN pip install --upgrade pip
-RUN apk --update add bash nano
+ENV LC_ALL=C.UTF-8
+ENV LANG=C.UTF-8
 
-ENV STATIC_URL /static
-ENV STATIC_PATH /var/www/app/static
-COPY ./requirements.txt /var/www/requirements.txt
-RUN pip install -r /var/www/requirements.txt
+RUN apt-get update -y && apt-get install -y python3-pip 
+
+# We copy just the requirements.txt first to leverage Docker cache
+ADD requirements.txt /app/
+
+WORKDIR /app
+
+RUN /bin/bash -c "pip3 install --no-cache-dir -r requirements.txt"
+
+ADD /app/ /app/
+
+EXPOSE 5000
+
+CMD ["gunicorn", "-b", "0.0.0.0:5000", "wsgi:app"]
