@@ -49,10 +49,10 @@ jobs:
           PORT: ${{ secrets.PORT }}
           KEY: ${{ secrets.SSH }}
           # password: ${{ secrets.PASSHPRASE }}
-        script: |
-          cd app/
-          git clone https://github.com/alexisflipo/3b.git
-          echo 'Cloning repo successfully'
+          script: |
+            cd app/
+            git clone https://github.com/alexisflipo/3b.git
+            echo 'Cloning repo successfully'
 
       - name: Deploy to Digital Ocean droplet via SSH action
         uses: appleboy/ssh-action@v0.1.3
