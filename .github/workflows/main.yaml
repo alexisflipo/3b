@@ -42,16 +42,16 @@ jobs:
 
     steps:
       - name: Copy file via scp
-      uses: appleboy/scp-action@master
-      env:
-        HOST: ${{ secrets.HOST }}
-        USERNAME: ${{ secrets.DROPLET_USER }}
-        PORT: ${{ secrets.PORT }}
-        KEY: ${{ secrets.SSH }}
-        passphrase: ${{ secrets.PASSHPRASE }}
-      with:
-        source: "."
-        target: "/app"
+        uses: appleboy/scp-action@master
+        env:
+          HOST: ${{ secrets.HOST }}
+          USERNAME: ${{ secrets.DROPLET_USER }}
+          PORT: ${{ secrets.PORT }}
+          KEY: ${{ secrets.SSH }}
+          passphrase: ${{ secrets.PASSHPRASE }}
+        with:
+          source: "."
+          target: "/app"
 
       - name: Deploy to Digital Ocean droplet via SSH action
         uses: appleboy/ssh-action@v0.1.3
