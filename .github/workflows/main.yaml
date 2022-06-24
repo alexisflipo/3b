@@ -45,14 +45,14 @@ jobs:
         uses: appleboy/ssh-action@v0.1.3
         with:
           host: ${{ secrets.HOST }}
-          username: ${{ secrets.USERNAME }}
-          password: ${{ secrets.PASSWORD }}
+          username: ${{ secrets.DROPLET_USER }}
           key: ${{ secrets.SSH }}
           passphrase: ${{ secrets.PASSHPRASE }}
           envs: IMAGE_NAME,REGISTRY,GITHUB_SHA, ${{ secrets.DOCKER_USER }}, ${{ secrets.DOCKER_PASSWORD }}
           port: 22
           script: |
             # login docker
+            echo 'Before login'
             docker login -u $DOCKER_USER -p $DOCKER_PASSWORD registry.digitalocean.com
 
             # Run a new container from a new image
