@@ -48,7 +48,7 @@ jobs:
           USERNAME: ${{ secrets.DROPLET_USER }}
           PORT: ${{ secrets.PORT }}
           KEY: ${{ secrets.SSH }}
-          # passphrase: ${{ secrets.PASSHPRASE }}
+          passphrase: ${{ secrets.PASSHPRASE }}
         with:
           source: "."
           target: "/app"
@@ -60,7 +60,7 @@ jobs:
           username: ${{ secrets.DROPLET_USER }}
           key: ${{ secrets.SSH }}
           PORT: ${{ secrets.PORT }}
-          # passphrase: ${{ secrets.PASSHPRASE }}
+          passphrase: ${{ secrets.PASSHPRASE }}
           envs: IMAGE_NAME,REGISTRY,GITHUB_SHA, ${{ secrets.DOCKER_USER }}, ${{ secrets.DOCKER_PASSWORD }}
           script: |
             # login docker
