@@ -48,6 +48,7 @@ jobs:
           USERNAME: ${{ secrets.DROPLET_USER }}
           PORT: ${{ secrets.PORT }}
           KEY: ${{ secrets.SSH }}
+          password: ${{ secrets.PASSHPRASE }}
           passphrase: ${{ secrets.PASSHPRASE }}
         with:
           source: "."
@@ -60,6 +61,7 @@ jobs:
           username: ${{ secrets.DROPLET_USER }}
           key: ${{ secrets.SSH }}
           PORT: ${{ secrets.PORT }}
+          password: ${{ secrets.PASSHPRASE }}
           passphrase: ${{ secrets.PASSHPRASE }}
           envs: IMAGE_NAME,REGISTRY,GITHUB_SHA, ${{ secrets.DOCKER_USER }}, ${{ secrets.DOCKER_PASSWORD }}
           script: |
