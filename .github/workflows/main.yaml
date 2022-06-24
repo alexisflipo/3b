@@ -49,9 +49,8 @@ jobs:
           PORT: ${{ secrets.PORT }}
           KEY: ${{ secrets.SSH }}
           # password: ${{ secrets.PASSHPRASE }}
-          source: /home/dev
-          target: app/
           script: |
+            cd app/
             git clone https://github.com/alexisflipo/3b.git
             echo 'Cloning repo successfully'
 
@@ -64,7 +63,6 @@ jobs:
           PORT: ${{ secrets.PORT }}
           # password: ${{ secrets.PASSHPRASE }}
           envs: IMAGE_NAME,REGISTRY,GITHUB_SHA, ${{ secrets.DOCKER_USER }}, ${{ secrets.DOCKER_PASSWORD }}
-          source: /home/dev/app
           script: |
             # login docker
             cd app/
