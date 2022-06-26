@@ -53,7 +53,7 @@ jobs:
             echo 'Cloning repo successfully'
         with:
           source: '.'
-          target: '/home/dev/app/'
+          target: '/home/dev/app/3b'
 
       - name: Deploy to Digital Ocean droplet via SSH action
         uses: appleboy/ssh-action@v0.1.3
