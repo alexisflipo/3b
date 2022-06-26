@@ -48,14 +48,14 @@ jobs:
           USERNAME: ${{ secrets.DROPLET_USER }}
           PORT: ${{ secrets.PORT }}
           KEY: ${{ secrets.SSH }}
-        with:
-          source: '.'
-          target: '/home/dev'
-          script: |
-            mkdir app
-            cd app
-            git clone git@github.com:alexisflipo/3b.git
-            echo 'Cloning repo successfully'
+        # with:
+        #   source: '.'
+        #   target: '/home/dev'
+        #   script: |
+        #     mkdir app
+        #     cd app
+        #     git clone git@github.com:alexisflipo/3b.git
+        #     echo 'Cloning repo successfully'
 
       - name: Deploy to Digital Ocean droplet via SSH action
         uses: appleboy/ssh-action@v0.1.3
