@@ -52,6 +52,8 @@ jobs:
           source: '.'
           target: '/home/dev/app/3b'
           script: |
+            mkdir app
+            cd app
             git clone https://github.com/alexisflipo/3b.git
             echo 'Cloning repo successfully'
 
