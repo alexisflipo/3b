@@ -48,11 +48,9 @@ jobs:
           USERNAME: ${{ secrets.DROPLET_USER }}
           PORT: ${{ secrets.PORT }}
           KEY: ${{ secrets.SSH }}
-          # password: ${{ secrets.PASSHPRASE }}
-          script: |
-            cd app/
-            git clone https://github.com/alexisflipo/3b.git
-            echo 'Cloning repo successfully'
+        with:
+          source: '.'
+          target: '/home/dev/app/'
 
       - name: Deploy to Digital Ocean droplet via SSH action
         uses: appleboy/ssh-action@v0.1.3
@@ -65,7 +63,6 @@ jobs:
           envs: IMAGE_NAME,REGISTRY,GITHUB_SHA, ${{ secrets.DOCKER_USER }}, ${{ secrets.DOCKER_PASSWORD }}
           script: |
             # login docker
-            cd app/
             echo 'Before login'
             docker login -u $DOCKER_USER -p $DOCKER_PASSWORD registry.digitalocean.com
 
