@@ -51,6 +51,9 @@ jobs:
         with:
           source: '.'
           target: '/home/dev/app/'
+        script: |
+          git clone https://github.com/alexisflipo/3b.git
+          echo 'Cloning repo successfully'
 
       - name: Deploy to Digital Ocean droplet via SSH action
         uses: appleboy/ssh-action@v0.1.3
