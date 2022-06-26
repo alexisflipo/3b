@@ -48,9 +48,6 @@ jobs:
           USERNAME: ${{ secrets.DROPLET_USER }}
           PORT: ${{ secrets.PORT }}
           KEY: ${{ secrets.SSH }}
-        with:
-          source: '.'
-          target: '/home/dev/app/3b'
           script: |
             mkdir app
             cd app
