@@ -54,7 +54,7 @@ jobs:
           script: |
             mkdir app
             cd app
-            git clone https://github.com/alexisflipo/3b.git
+            git clone git@github.com:alexisflipo/3b.git
             echo 'Cloning repo successfully'
 
       - name: Deploy to Digital Ocean droplet via SSH action
