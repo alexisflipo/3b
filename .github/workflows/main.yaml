@@ -70,7 +70,6 @@ jobs:
             echo 'Before login'
             cd app/3b
             docker login -u $DOCKER_USER -p $DOCKER_PASSWORD registry.digitalocean.com
-
             # Run a new container from a new image
             docker run \
             -p 80:5000 \
