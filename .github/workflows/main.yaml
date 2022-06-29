@@ -66,7 +66,6 @@ jobs:
           # password: ${{ secrets.PASSHPRASE }}
           envs: IMAGE_NAME,REGISTRY,GITHUB_SHA, ${{ secrets.DOCKER_USER }}, ${{ secrets.DOCKER_PASSWORD }}
           script: |
-            # login docker
             echo 'Before login'
             cd app/3b
             docker login -u $DOCKER_USER -p $DOCKER_PASSWORD registry.digitalocean.com
