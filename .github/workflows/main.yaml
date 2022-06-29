@@ -72,8 +72,8 @@ jobs:
             docker login -u $DOCKER_USER -p $DOCKER_PASSWORD registry.digitalocean.com
 
             # Run a new container from a new image
-            docker run -d \
-            --restart always \
+            docker run \
             -p 80:5000 \
+            --restart always \
             --name $(echo $IMAGE_NAME) \
             $(echo $REGISTRY)/$(echo $IMAGE_NAME):$(echo $GITHUB_SHA | head -c7)
