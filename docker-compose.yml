@@ -28,7 +28,8 @@ services:
       APP_DEBUG: "false"
       SERVICE_NAME: "webserver"
     ports:
-      - 1337:80
+      - 80:80
+      - 443:443
     volumes:
       - nginxdata:/var/log/nginx
     depends_on:
