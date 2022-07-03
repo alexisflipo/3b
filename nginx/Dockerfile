@@ -1,4 +1,4 @@
-FROM digitalocean.com/alpine:latest
+FROM alpine:latest
 
 RUN apk --update add nginx && \
     ln -sf /dev/stdout /var/log/nginx/access.log && \
@@ -10,5 +10,5 @@ RUN apk --update add nginx && \
 
 COPY conf.d/app.conf /etc/nginx/conf.d/app.conf
 
-EXPOSE 80 443
+EXPOSE 8000 443
 CMD ["nginx", "-g", "daemon off;"]
