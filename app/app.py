@@ -7,7 +7,7 @@ application = Flask(__name__)
 
 @application.route('/')
 def index():
-    return (render_template('index.html'))
+    return "hello"
 
 if __name__ == '__main__':
     ENVIRONMENT_DEBUG = os.environ.get("APP_DEBUG", True)

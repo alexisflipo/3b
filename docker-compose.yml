@@ -1,21 +1,5 @@
 version: '3.6'
 services:
-  flask:
-    build:
-      context: app
-      dockerfile: Dockerfile
-    container_name: flask
-    restart: unless-stopped
-    environment:
-      APP_ENV: "prod"
-      APP_DEBUG: "False"
-      APP_PORT: 5000
-    volumes:
-      - appdata:/var/www
-    networks:
-      - frontend
-      - backend
-
   webserver:
     build:
       context: nginx
@@ -25,18 +9,34 @@ services:
     environment:
       APP_ENV: "prod"
       APP_NAME: "webserver"
-      APP_DEBUG: "false"
+      APP_DEBUG: "true"
       SERVICE_NAME: "webserver"
     ports:
       - 80:80
       - 443:443
-    volumes:
-      - nginxdata:/var/log/nginx
     depends_on:
       - flask
     networks:
       - frontend
       - backend
+  flask:
+    build:
+      context: app
+      dockerfile: Dockerfile
+    container_name: flask
+    restart: unless-stopped
+    environment:
+      APP_ENV: "prod"
+      APP_DEBUG: "true"
+      APP_PORT: 5000
+    volumes:
+      - "./app/:/usr/src/app/"
+    expose:
+      - 5000
+    networks:
+      - frontend
+      - backend
+
 networks:
   frontend:
     driver: bridge
