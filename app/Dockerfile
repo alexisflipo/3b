@@ -26,6 +26,6 @@ RUN chown -R www:www $HOME
 
 USER www
 
-EXPOSE 5000
+EXPOSE 5090
 
-CMD [ "gunicorn", "-w", "4", "--bind", "0.0.0.0:5000", "wsgi"]
+CMD [ "gunicorn", "-w", "4", "--bind", "0.0.0.0:5090", "wsgi"]
