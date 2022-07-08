@@ -11,25 +11,20 @@ RUN apt-get install -y python3-pip \
 
 # ENV GROUP_ID=1000 \
 #     USER_ID=1000
-RUN mkdir -p /home/app
+RUN mkdir -p /home/www
 
 # create the app user
-RUN addgroup --system app && adduser --system --group app
+RUN addgroup --system www && adduser --system --group www
 # WORKDIR /var/www/
-ENV HOME=/home/app
+ENV HOME=/home/www
 # ADD . /var/www/
 # ADD ./requirements.txt /var/www/requirements.txt
 COPY . $HOME
 WORKDIR $HOME
 RUN pip install -r requirements.txt
-RUN chown -R app:app $HOME
+RUN chown -R www:www $HOME
 
-USER app
-# RUN adduser --system --group www
-# RUN addgroup --gid $GROUP_ID www
-# RUN adduser --uid $USER_ID --home "www" --shell /bin/sh 
-
-# USER www
+USER www
 
 EXPOSE 5000
 
