@@ -7,9 +7,9 @@ on:
 
   workflow_dispatch:
 
-env:
-  REGISTRY: ${{ secrets.DIGITAL_OCEAN_REGISTRY }}
-  IMAGE_NAME: "3b_app"
+# env:
+#   REGISTRY: ${{ secrets.DIGITAL_OCEAN_REGISTRY }}
+#   IMAGE_NAME: "3b_app"
 
 jobs:
   build_and_push:
@@ -20,42 +20,45 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Build container image latest version
-        run: cd app/ && docker build -t $(echo $REGISTRY)/$(echo $IMAGE_NAME):$(echo $GITHUB_SHA | head -c7) .
+        # run: cd app/ && docker build -t $(echo $REGISTRY)/$(echo $IMAGE_NAME):$(echo $GITHUB_SHA | head -c7) .
+        run: docker-compose build 
 
-      - name: Install doctl
-        uses: digitalocean/action-doctl@v2
-        with:
-          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+      # - name: Install doctl
+      #   uses: digitalocean/action-doctl@v2
+      #   with:
+      #     token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
 
-      - name: Log in to DigitalOcean Container Registry with short-lived credentials
-        run: doctl registry login --expiry-seconds 600
+      # - name: Log in to DigitalOcean Container Registry with short-lived credentials
+      #   run: doctl registry login --expiry-seconds 600
 
-      - name: Remove all old images
-        run: if [ ! -z "$(doctl registry repository list | grep "$(echo $IMAGE_NAME)")" ]; then doctl registry repository delete-manifest $(echo $IMAGE_NAME) $(doctl registry repository list-tags $(echo $IMAGE_NAME) | grep -o "sha.*") --force; else echo "No repository"; fi
+      # - name: Remove all old images
+      #   run: if [ ! -z "$(doctl registry repository list | grep "$(echo $IMAGE_NAME)")" ]; then doctl registry repository delete-manifest $(echo $IMAGE_NAME) $(doctl registry repository list-tags $(echo $IMAGE_NAME) | grep -o "sha.*") --force; else echo "No repository"; fi
 
-      - name: Push image to DigitalOcean Container Registry
-        run: docker push $(echo $REGISTRY)/$(echo $IMAGE_NAME):$(echo $GITHUB_SHA | head -c7)
+      # - name: Push image to DigitalOcean Container Registry
+      #   run: docker push $(echo $REGISTRY)/$(echo $IMAGE_NAME):$(echo $GITHUB_SHA | head -c7)
 
   deploy:
     needs: build_and_push
     runs-on: ubuntu-20.04
 
     steps:
-      # - name: Copy file via scp
-      #   uses: appleboy/scp-action@master
-        # env:
-        #   HOST: ${{ secrets.HOST }}
-        #   USERNAME: ${{ secrets.DROPLET_USER }}
-        #   PORT: ${{ secrets.PORT }}
-        #   KEY: ${{ secrets.SSH }}
-        # with:
-        #   source: '.'
-        #   target: '/home/dev'
-        #   script: |
-        #     cd app/3b
-        #     git checkout master
-        #     git pull origin master
-        #     echo 'Cloning repo successfully'
+      - name: Copy file via scp
+        uses: appleboy/scp-action@master
+        env:
+          HOST: ${{ secrets.HOST }}
+          USERNAME: ${{ secrets.DROPLET_USER }}
+          PORT: ${{ secrets.PORT }}
+          KEY: ${{ secrets.SSH }}
+        with:
+          source: '.'
+          target: '/home/dev'
+          script: |
+            cd app/3b
+            pwd
+            git checkout master
+            git pull origin master
+            echo 'Cloning repo successfully'
+      
       - name: Deploy to Digital Ocean droplet via SSH action
         uses: appleboy/ssh-action@v0.1.3
         with:
