@@ -66,7 +66,7 @@ jobs:
           # password: ${{ secrets.PASSHPRASE }}
           envs: GITHUB_SHA
           script: |
-            pwd 
+            cd app/3b
             git pull origin master
 
           
