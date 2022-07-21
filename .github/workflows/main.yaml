@@ -65,8 +65,6 @@ jobs:
           PORT: ${{ secrets.PORT }}
           # password: ${{ secrets.PASSHPRASE }}
           envs: GITHUB_SHA
-          source: '.'
-          target: '/app/3b'
           script: |
             git pull origin docker_nginx
             git checkout docker_nginx
