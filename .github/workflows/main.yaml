@@ -52,9 +52,9 @@ jobs:
         #   source: '.'
         #   target: '/home/dev'
         #   script: |
-        #     mkdir app
-        #     cd app
-        #     git clone git@github.com:alexisflipo/3b.git
+        #     cd app/3b
+        #     git checkout master
+        #     git pull origin master
         #     echo 'Cloning repo successfully'
       - name: Deploy to Digital Ocean droplet via SSH action
         uses: appleboy/ssh-action@v0.1.3
