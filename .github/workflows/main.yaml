@@ -66,6 +66,7 @@ jobs:
           # password: ${{ secrets.PASSHPRASE }}
           envs: GITHUB_SHA
           script: |
-            git pull origin docker_nginx
-            git checkout docker_nginx
-            docker-compose up -d
+            pwd 
+            git pull origin master
+
+          
