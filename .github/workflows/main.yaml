@@ -66,9 +66,8 @@ jobs:
           PORT: ${{ secrets.PORT }}
           # password: ${{ secrets.PASSHPRASE }}
           envs: GITHUB_SHA
-          with:
-            source: '.'
-            target: '/home/dev/app/3b'
-            script: |
-              docker-compose up -d
+          source: '.'
+          target: '/home/dev/app/3b'
+          script: |
+            docker-compose up -d
           # docker login -u $DOCKER_USER -p $DOCKER_PASSWORD registry.digitalocean.com
