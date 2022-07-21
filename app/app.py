@@ -12,12 +12,12 @@ application.config['SQLALCHEMY_DATABASE_URI'] = "mysql://mysql_user:SxEmnfzY94$5
 # application.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DB_CONNECTION')
 print(application.config['SQLALCHEMY_DATABASE_URI'])
 application.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-db = SQLAlchemy(application)
-ckeditor = CKEditor(application)
 application.config.update(
     TESTING=True,
     SECRET_KEY='192b9bdd22ab9ed4d12e236c78afcb9a393ec15f71bbf5dc987d54727823bcbf'
 )
+db = SQLAlchemy(application)
+ckeditor = CKEditor(application)
 class Articles(db.Model):
     article_id = db.Column(db.BigInteger, primary_key=True)
     titre = db.Column(db.String(100))
@@ -28,14 +28,23 @@ class PostAdmin(ModelView):
     form_overrides = dict(text=CKEditorField)
     create_template = 'create.html'
     edit_template = 'edit.html'
+
 admin = Admin(application, name='3BackOffice', template_mode='bootstrap3')
 # admin.add_view(ModelView(Articles, db.session))
 admin.add_view(PostAdmin(Articles, db.session))
+# blueprint for auth routes in our app
+from auth import auth as auth_blueprint
+application.register_blueprint(auth_blueprint)
+
+# blueprint for non-auth parts of app
+from main import main as main_blueprint
+application.register_blueprint(main_blueprint)
 
 @application.route('/')
 def index():
     articles = Articles.query.all()
     return render_template('index.html', articles= articles)
+
 @application.route('/articles/<titre>', methods=['GET'])
 def articles(titre):
     article = Articles.query.filter_by(titre=titre).first_or_404()

@@ -43,7 +43,7 @@ jobs:
   deploy:
     needs: build
     runs-on: ubuntu-20.04
-    # if: github.event.pull_request.merged == true
+    if: github.event.pull_request.merged == true
     steps:
     #   - name: Copy file via scp
     #     uses: appleboy/scp-action@master
