@@ -1,13 +1,7 @@
-name: CI
+name: CI-preprod
 on:
-  # pull_request:
-  #   branches: 
-  #   - master
-  #   - 'release/*'
-  push:
-    branches: 
-    - master
-  
+  - pull_request
+
   workflow_dispatch:
 
 # env:
@@ -15,7 +9,7 @@ on:
 #   IMAGE_NAME: "3b_app"
 
 jobs:
-  build_and_push:
+  build:
     runs-on: ubuntu-20.04
 
     steps:
@@ -40,8 +34,11 @@ jobs:
       # - name: Push image to DigitalOcean Container Registry
       #   run: docker push $(echo $REGISTRY)/$(echo $IMAGE_NAME):$(echo $GITHUB_SHA | head -c7)
 
+name: CI-prod
+  workflow_dispatch:
+jobs:
   deploy:
-    needs: build_and_push
+    needs: build
     runs-on: ubuntu-20.04
 
     steps:

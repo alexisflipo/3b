@@ -43,12 +43,12 @@ services:
     ports:
       - 3306:3306
     environment:
-      - MYSQL_DATABASE=${MYSQL_DB}
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
       # So you don't have to use root, but you can if you like
       - MYSQL_USER=${MYSQL_USER}
       # You can use whatever password you like
-      - MYSQL_PASSWORD=${MYSQL_PWD}
-      - MYSQL_ROOT_PASSWORD=${ROOT_PWD}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
     volumes:
       - ./mysql-data:/var/lib/mysql
       - mysql-data-config:/etc/mysql
