@@ -38,7 +38,6 @@ jobs:
       # - name: Push image to DigitalOcean Container Registry
       #   run: docker push $(echo $REGISTRY)/$(echo $IMAGE_NAME):$(echo $GITHUB_SHA | head -c7)
 
-name: CI-prod
 on:
   push:
   branches:
