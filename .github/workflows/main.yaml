@@ -51,10 +51,9 @@ jobs:
           KEY: ${{ secrets.SSH }}
         with:
           source: '.'
-          target: '/home/dev/app/3b'
+          target: '~/app/3b'
           script: |
-            git checkout master
-            git pull origin master
+            git pull origin docker_nginx
             echo 'Cloning repo successfully'
       
       - name: Deploy to Digital Ocean droplet via SSH action
@@ -67,6 +66,7 @@ jobs:
           # password: ${{ secrets.PASSHPRASE }}
           envs: GITHUB_SHA
           source: '.'
-          target: '/home/dev/app/3b'
+          target: '~/app/3b'
           script: |
+            git checkout docker_nginx
             docker-compose up -d
