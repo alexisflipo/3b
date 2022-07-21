@@ -1,6 +1,10 @@
 name: CI-preprod
-on:
-  - pull_request
+on:  
+  push:
+  pull_request:
+    branches:
+      - master
+      - hotfix/*
 
   workflow_dispatch:
 
