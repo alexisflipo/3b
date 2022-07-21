@@ -19,7 +19,7 @@ jobs:
       - name: Checkout files
         uses: actions/checkout@v2
 
-      - name: Build container image latest version
+      - name: Build multiple images via docker-compose
         # run: cd app/ && docker build -t $(echo $REGISTRY)/$(echo $IMAGE_NAME):$(echo $GITHUB_SHA | head -c7) .
         run: docker-compose build 
 
@@ -51,10 +51,8 @@ jobs:
           KEY: ${{ secrets.SSH }}
         with:
           source: '.'
-          target: '/home/dev'
+          target: '/home/dev/app/3b'
           script: |
-            cd app/3b
-            pwd
             git checkout master
             git pull origin master
             echo 'Cloning repo successfully'
@@ -67,10 +65,10 @@ jobs:
           key: ${{ secrets.SSH }}
           PORT: ${{ secrets.PORT }}
           # password: ${{ secrets.PASSHPRASE }}
-          envs: IMAGE_NAME,REGISTRY,GITHUB_SHA, ${{ secrets.DOCKER_USER }}, ${{ secrets.DOCKER_PASSWORD }}
-          script: |
-            echo 'Before login'
-            cd app/3b
-            docker login -u $DOCKER_USER -p $DOCKER_PASSWORD registry.digitalocean.com
-            # Run a new container from a new image
-            docker-compose up -d
+          envs: GITHUB_SHA
+          with:
+            source: '.'
+            target: '/home/dev/app/3b'
+            script: |
+              docker-compose up -d
+          # docker login -u $DOCKER_USER -p $DOCKER_PASSWORD registry.digitalocean.com
