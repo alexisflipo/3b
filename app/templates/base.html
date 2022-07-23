@@ -8,7 +8,9 @@
     <title>{% block title %} {% endblock %} FlaskApp</title>
 </head>
 <body>
-    <hr>
+    {% block content %}
+    {% endblock %}
+    <!-- <hr>
     <section class="hero is-primary is-fullheight">
 
         <div class="hero-head">
@@ -36,11 +38,9 @@
         </div>
 
         <div class="hero-body">
-            <div class="container has-text-centered">
-               {% block content %}
-               {% endblock %}
-            </div>
+            <div class="container has-text-centered"> -->
+            <!-- </div>
         </div>
-    </section>
+    </section> -->
 </body>
 </html>

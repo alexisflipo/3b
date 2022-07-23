@@ -1,16 +1,35 @@
-from flask import Blueprint
-from app import db
+from flask import Blueprint, render_template, redirect, url_for, request
+from werkzeug.security import generate_password_hash, check_password_hash
+from app.app import db, Users
 
 auth = Blueprint('auth', __name__)
 
 @auth.route('/login')
 def login():
-    return 'Login'
+    return render_template('login.html')
 
 @auth.route('/signup')
 def signup():
-    return 'Signup'
+    return render_template('signup.html')
 
 @auth.route('/logout')
 def logout():
     return 'Logout'
+
+@auth.route('/signup', methods=['POST'])
+def signup_post():
+    email = request.form.get('email')
+    name = request.form.get('name')
+    password = request.form.get('password')
+
+    user = Users.query.filter_by(email=email).first()
+    if user: # if a user is found, we want to redirect back to signup page so user can try again
+        return redirect(url_for('auth.signup'))
+
+    # create a new user with the form data. Hash the password so the plaintext version isn't saved.
+    new_user = Users(email=email, name=name, password=generate_password_hash(password, method='sha256'))
+
+    # add the new user to the database
+    db.session.add(new_user)
+    db.session.commit()
+    return redirect(url_for('auth.login'))

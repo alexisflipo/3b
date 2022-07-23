@@ -18,8 +18,9 @@ application.config.update(
 )
 db = SQLAlchemy(application)
 ckeditor = CKEditor(application)
+
 class Articles(db.Model):
-    article_id = db.Column(db.BigInteger, primary_key=True)
+    id = db.Column(db.BigInteger, primary_key=True)
     titre = db.Column(db.String(100))
     description = db.Column(db.Text)
     images = db.Column(db.String(100))
@@ -28,10 +29,15 @@ class PostAdmin(ModelView):
     form_overrides = dict(text=CKEditorField)
     create_template = 'create.html'
     edit_template = 'edit.html'
-
+class Users(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    email = db.Column(db.String(100),  unique=True)
+    name = db.Column(db.String(100))
+    password = db.Column(db.String(100))
 admin = Admin(application, name='3BackOffice', template_mode='bootstrap3')
 # admin.add_view(ModelView(Articles, db.session))
 admin.add_view(PostAdmin(Articles, db.session))
+admin.add_view(PostAdmin(Users, db.session))
 # blueprint for auth routes in our app
 from auth import auth as auth_blueprint
 application.register_blueprint(auth_blueprint)
