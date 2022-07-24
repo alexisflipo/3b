@@ -2,6 +2,7 @@ from flask import Flask, render_template
 from flask_admin import Admin
 from flask_ckeditor import CKEditor, CKEditorField
 from flask_admin.contrib.sqla import ModelView
+from flask_login import UserMixin, LoginManager, current_user
 from flask_sqlalchemy import SQLAlchemy
 import os
 application = Flask(__name__)
@@ -19,6 +20,14 @@ application.config.update(
 db = SQLAlchemy(application)
 ckeditor = CKEditor(application)
 
+login_manager = LoginManager()
+login_manager.login_view = 'auth.login'
+login_manager.init_app(application)
+
+@login_manager.user_loader
+def load_user(user_id):
+    return Users.query.get(int(user_id))
+
 class Articles(db.Model):
     id = db.Column(db.BigInteger, primary_key=True)
     titre = db.Column(db.String(100))
@@ -29,12 +38,12 @@ class PostAdmin(ModelView):
     form_overrides = dict(text=CKEditorField)
     create_template = 'create.html'
     edit_template = 'edit.html'
-class Users(db.Model):
+class Users(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(100),  unique=True)
     name = db.Column(db.String(100))
     password = db.Column(db.String(100))
-admin = Admin(application, name='3BackOffice', template_mode='bootstrap3')
+admin = Admin(application,name='3BackOffice', template_mode='bootstrap3')
 # admin.add_view(ModelView(Articles, db.session))
 admin.add_view(PostAdmin(Articles, db.session))
 admin.add_view(PostAdmin(Users, db.session))
@@ -49,7 +58,10 @@ application.register_blueprint(main_blueprint)
 @application.route('/')
 def index():
     articles = Articles.query.all()
-    return render_template('index.html', articles= articles)
+    if current_user.is_authenticated:
+        return render_template('articles.html', articles=articles)
+    else:
+        return render_template('index.html')
 
 @application.route('/articles/<titre>', methods=['GET'])
 def articles(titre):
