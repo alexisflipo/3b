@@ -71,7 +71,7 @@ jobs:
         script: |
           cd app/3b
           git pull origin master
-          
+
     - name: Up docker-compose
       uses: appleboy/ssh-action@v0.1.3
       with:
@@ -88,5 +88,4 @@ jobs:
         PORT: ${{ secrets.PORT }}
         envs: GITHUB_SHA
         script: |
-        docker-compose docker-compose.yml up -d
-          docker-compose docker-compose.yml up -d
+          docker-compose up --build --force-recreate
