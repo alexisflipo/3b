@@ -54,19 +54,16 @@ jobs:
       - name: Deploy to Digital Ocean droplet via SSH action
         uses: appleboy/ssh-action@v0.1.3
         with:
-          host: ${{ secrets.HOST }}
-          username: ${{ secrets.DROPLET_USER }}
-          key: ${{ secrets.SSH }}
-          PORT: ${{ secrets.PORT }}
+          
           # password: ${{ secrets.PASSHPRASE }}
           envs: GITHUB_SHA
           script: |
             cd app/3b
             git pull origin master
 
-      - name: Install doctl
+      - name: Up docker-compose
         uses: appleboy/ssh-action@v0.1.3
-        env:
+        with:
           token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
           MYSQL_DATABASE: ${{ secrets.MYSQL_DATABASE }}
       # So you don't have to use root, but you can if you like
@@ -74,7 +71,12 @@ jobs:
       # You can use whatever password you like
           MYSQL_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}
           MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
-        script: |
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.DROPLET_USER }}
+          key: ${{ secrets.SSH }}
+          PORT: ${{ secrets.PORT }}
+          envs: GITHUB_SHA
+          script: |
           docker-compose docker-compose.yml up -d
       # - name: Log in to DigitalOcean Container Registry with short-lived credentials
       #   run: doctl registry login --expiry-seconds 600
