@@ -1,13 +1,16 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="w-60 h-full shadow-md bg-white px-1 absolute">
-    {% for article in articles %}
-    <ul class="relative">
-      <li class="relative">
-        <a class="flex items-center text-sm py-4 px-6 h-12 overflow-hidden text-gray-700 text-ellipsis whitespace-nowrap rounded hover:text-gray-900 hover:bg-gray-100 transition duration-300 ease-in-out" href="{{url_for('articles', titre=article.titre)}}" data-mdb-ripple="true" data-mdb-ripple-color="dark">{{ article.titre }}</a>
-      </li>
-    </ul>
-    {% endfor %}
-</div>
+<header>
+  <!-- Navbar -->
+  <!-- Navbar -->
+
+  <!-- Jumbotron -->
+  <div class="text-center bg-gray-50 text-gray-800 py-20 px-6 h-screen">
+    <h1 class="text-5xl font-bold mt-0 mb-6">Begin to Be Better</h1>
+    <h3 class="text-3xl font-bold mb-8">Master the programming's fundamentals</h3>
+    <a class="inline-block px-6 py-2.5 bg-blue-600 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-blue-700 hover:shadow-lg focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-800 active:shadow-lg transition duration-150 ease-in-out" data-mdb-ripple="true" data-mdb-ripple-color="light" href="{{ url_for('auth.signup') }}" role="button">Get started</a>
+  </div>
+  <!-- Jumbotron -->
+</header>
 {% endblock %}
