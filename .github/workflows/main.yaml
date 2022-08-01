@@ -80,7 +80,7 @@ jobs:
           PORT: ${{ secrets.PORT }}
           envs: GITHUB_SHA
           script: |
-          docker-compose docker-compose.yml up -d
+            docker-compose docker-compose.yml up -d
       # - name: Log in to DigitalOcean Container Registry with short-lived credentials
       #   run: doctl registry login --expiry-seconds 600
 
