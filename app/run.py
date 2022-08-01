@@ -7,9 +7,10 @@ from flask_sqlalchemy import SQLAlchemy
 import os
 application = Flask(__name__)
 application.config['FLASK_ADMIN_SWATCH'] = 'cerulean'
-# application.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://remotedbuser:fG$N6PaSpE?f&6zB@178.62.48.158:3306/3b'
-# application.config['SQLALCHEMY_DATABASE_URI'] = f"mysql://root:{os.environ.get('MYSQL_ROOT_PASSWORD')}@localhost:3306/{os.environ.get('MYSQL_DB')}"
-application.config['SQLALCHEMY_DATABASE_URI'] = "mysql://mysql_user:SxEmnfzY94$55eBQ@mysql_db/final_project"
+user=os.getenv("MYSQL_USER")
+user_pwd=os.getenv("MYSQL_PASSWORD")
+db = os.getenv("MYSQL_DATABASE")
+application.config['SQLALCHEMY_DATABASE_URI'] = f"mysql://{user}:{user_pwd}@mysql_db/{db}"
 # application.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DB_CONNECTION')
 print(application.config['SQLALCHEMY_DATABASE_URI'])
 application.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -63,7 +64,7 @@ def index():
     else:
         return render_template('index.html')
 
-@application.route('/articles/<titre>', methods=['GET'])
+@application.route('/<titre>', methods=['GET'])
 def articles(titre):
     article = Articles.query.filter_by(titre=titre).first_or_404()
     description = article.description
