@@ -43,7 +43,7 @@ jobs:
   deploy:
     needs: build
     runs-on: ubuntu-20.04
-    # if: github.event.pull_request.merged == true
+    if: github.event.pull_request.merged == true
     steps:
     #   - name: Copy file via scp
     #     uses: appleboy/scp-action@master
@@ -59,7 +59,7 @@ jobs:
     #         git pull origin docker_nginx
     #         echo 'Cloning repo successfully'
       
-      - name: Deploy to Digital Ocean droplet via SSH action
+     - name: Deploy to Digital Ocean droplet via SSH action
         uses: appleboy/ssh-action@v0.1.3
         with:
           host: ${{ secrets.HOST }}
@@ -72,4 +72,20 @@ jobs:
             cd app/3b
             git pull origin master
 
-          
+      - name: Up docker-compose
+        uses: appleboy/ssh-action@v0.1.3
+        with:
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+          MYSQL_DATABASE: ${{ secrets.MYSQL_DATABASE }}
+      # So you don't have to use root, but you can if you like
+          MYSQL_USER: ${{ secrets.MYSQL_USER }}
+      # You can use whatever password you like
+          MYSQL_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}
+          MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.DROPLET_USER }}
+          key: ${{ secrets.SSH }}
+          PORT: ${{ secrets.PORT }}
+          envs: GITHUB_SHA
+          script: |
+            docker-compose up --build --force-recreate
