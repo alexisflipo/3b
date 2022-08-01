@@ -22,9 +22,7 @@ jobs:
       - name: Checkout files
         uses: actions/checkout@v2
       - name: Build multiple images via docker-compose
-        uses: digitalocean/action-doctl@v2
-        with:
-          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+        env:
           MYSQL_DATABASE: ${{ secrets.MYSQL_DATABASE }}
       # So you don't have to use root, but you can if you like
           MYSQL_USER: ${{ secrets.MYSQL_USER }}
@@ -32,7 +30,6 @@ jobs:
           MYSQL_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}
           MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
         # run: cd app/ && docker build -t $(echo $REGISTRY)/$(echo $IMAGE_NAME):$(echo $GITHUB_SHA | head -c7) .
-      - name : Build images
         run: docker-compose build 
 
       # - name: Install doctl
