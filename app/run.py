@@ -7,16 +7,15 @@ from flask_sqlalchemy import SQLAlchemy
 import os
 application = Flask(__name__)
 application.config['FLASK_ADMIN_SWATCH'] = 'cerulean'
-user=os.getenv("MYSQL_USER")
-user_pwd=os.getenv("MYSQL_PASSWORD")
-db = os.getenv("MYSQL_DATABASE")
+user=os.environ.get("MYSQL_USER")
+user_pwd=os.environ.get("MYSQL_PASSWORD")
+db = os.environ.get("MYSQL_DATABASE")
+flask_secret=os.environ.get("FLASK_SECRET_KEY")
 application.config['SQLALCHEMY_DATABASE_URI'] = f"mysql://{user}:{user_pwd}@mysql_db/{db}"
-# application.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DB_CONNECTION')
-print(application.config['SQLALCHEMY_DATABASE_URI'])
 application.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 application.config.update(
-    TESTING=True,
-    SECRET_KEY='192b9bdd22ab9ed4d12e236c78afcb9a393ec15f71bbf5dc987d54727823bcbf'
+    TESTING=False,
+    SECRET_KEY=flask_secret
 )
 db = SQLAlchemy(application)
 ckeditor = CKEditor(application)
