@@ -70,10 +70,10 @@ jobs:
         envs: GITHUB_SHA
         script: |
           cd app/3b
-          for f in mysql.env web.env; do echo MYSQL_DATABASE=$${{ secrets.MYSQL_DATABASE }} >> $f; done
-          for f in mysql.env web.env; do echo MYSQL_USER= $${{ secrets.MYSQL_USER }} >> $f; done
-          for f in mysql.env web.env; do echo MYSQL_PASSWORD= $${{ secrets.MYSQL_PASSWORD }} >> $f; done
-          MYSQL_ROOT_PASSWORD= $${{ secrets.MYSQL_ROOT_PASSWORD }} >> mysql.env
+          for f in mysql.env web.env; do echo MYSQL_DATABASE=${{ secrets.MYSQL_DATABASE }} >> $f; done
+          for f in mysql.env web.env; do echo MYSQL_USER=${{ secrets.MYSQL_USER }} >> $f; done
+          for f in mysql.env web.env; do echo MYSQL_PASSWORD=${{ secrets.MYSQL_PASSWORD }} >> $f; done
+          MYSQL_ROOT_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }} >> mysql.env
           docker-compose build --no-cache
           docker-compose up -d
 
