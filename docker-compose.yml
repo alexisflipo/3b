@@ -26,13 +26,8 @@ services:
     restart: unless-stopped
     volumes:
         - ./app:/home/www/
-    environment:
-        MYSQL_DATABASE: $${{ secrets.MYSQL_DATABASE }}
-        # So you don't have to use root, but you can if you like
-        MYSQL_USER: $${{ secrets.MYSQL_USER }}
-        # You can use whatever password you like
-        MYSQL_PASSWORD: $${{ secrets.MYSQL_PASSWORD }}
-        FLASK_SECRET_KEY: $${{ secrets.FLASK_SECRET_KEY }}
+    env_file:
+        - web.env
     ports:
         - 8080:5090
     depends_on:
@@ -46,11 +41,8 @@ services:
     restart: always
     ports:
       - 3306:3306
-    environment:
-      MYSQL_DATABASE: $${{ secrets.MYSQL_DATABASE }}
-      MYSQL_USER: $${{ secrets.MYSQL_USER }}
-      MYSQL_PASSWORD: $${{ secrets.MYSQL_PASSWORD }}
-      MYSQL_ROOT_PASSWORD: $${{ secrets.MYSQL_ROOT_PASSWORD }}
+    env_file:
+      - mysql.env
     volumes:
       - ./mysql-data:/var/lib/mysql
       - mysql-data-config:/etc/mysql
