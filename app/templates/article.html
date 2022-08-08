@@ -1,7 +1,28 @@
 {% extends 'base.html' %}
 
 {% block content %}
+<section class="h-full gradient-form bg-gray-200 md:h-screen">
+    <div class="container py-4 px-6 h-full mx-auto">
+      <div class="flex justify-center items-center flex-wrap h-full g-6 text-gray-800">
+        <div class="xl:w-12/12 w-full">
+          <div class="block bg-white shadow-lg rounded-lg">
+            <div class="flex justify-center lg:flex-wrap g-0 lg:flex-wrap g-0">
+              <div class="lg:w-12/12 px-4 md:px-0 w-full">
+                <div class="md:p-6 md:mx-4">
+                  <div class="text-center">
+                    <h1 class="text-center">{{ titre.titre }}</h1>
+                  </div>
+                  <div class="mb-4">
+                    <p class="w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-white">{{description|safe}}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
 
-<h1>{{ titre.titre }}</h1>
-{{ description|safe }}
+</div>
 {% endblock %}
