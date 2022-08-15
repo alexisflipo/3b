@@ -44,12 +44,14 @@ class Articles(db.Model):
     images = db.Column(db.String(100))
     publish_date = db.Column(db.Date)
 
+
 class PostAdmin(ModelView):
     def is_accessible(self):
         return current_user.is_authenticated and current_user.is_admin
 
     def inaccessible_callback(self, name, **kwargs):
-        return redirect(url_for('auth.login', next=request.url))
+        return redirect(url_for("auth.login", next=request.url))
+
     form_overrides = dict(text=CKEditorField)
     create_template = "create.html"
     edit_template = "edit.html"
@@ -62,13 +64,14 @@ class User(UserMixin, db.Model):
     password = db.Column(db.String(255))
     is_admin = db.Column(db.Boolean, default=False)
 
+
 class MyAdminIndexView(AdminIndexView):
     def is_accessible(self):
         return current_user.is_authenticated and current_user.is_admin
 
     def inaccessible_callback(self, name, **kwargs):
 
-        return redirect(url_for('auth.login', next=request.url))
+        return redirect(url_for("auth.login", next=request.url))
 
     @expose("/")
     def index(self):
@@ -77,12 +80,15 @@ class MyAdminIndexView(AdminIndexView):
         return super(MyAdminIndexView, self).index()
 
 
-admin = Admin(application, name="3BackOffice", template_mode="bootstrap3", index_view=MyAdminIndexView())
+admin = Admin(
+    application,
+    name="3BackOffice",
+    template_mode="bootstrap3",
+    index_view=MyAdminIndexView(),
+)
 admin.add_view(PostAdmin(Articles, db.session))
 admin.add_view(PostAdmin(User, db.session))
-admin.add_link(
-        MenuLink(name="Logout", category="", url="/logout")
-    )
+admin.add_link(MenuLink(name="Logout", category="", url="/logout"))
 
 # blueprint for auth routes in our app
 from auth import auth as auth_blueprint
@@ -94,6 +100,7 @@ from main import main as main_blueprint
 
 application.register_blueprint(main_blueprint)
 
+
 @lru_cache(maxsize=1024)
 @application.route("/")
 def index():
@@ -102,6 +109,7 @@ def index():
         return render_template("articles.html", articles=articles)
     else:
         return render_template("index.html")
+
 
 @lru_cache(maxsize=1024)
 @application.route("/<titre>", methods=["GET"])

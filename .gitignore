@@ -1,8 +1,8 @@
 mysql-data
 # Created by https://www.toptal.com/developers/gitignore/api/flask,python,visualstudiocode
 # Edit at https://www.toptal.com/developers/gitignore?templates=flask,python,visualstudiocode
-# mysql.env
-# web.env
+mysql.env
+web.env
 ### Flask ###
 instance/*
 !instance/.gitignore
