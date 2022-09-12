@@ -12,12 +12,12 @@ load_dotenv()
 user=os.environ.get("MYSQL_USER")
 user_pwd=os.environ.get("MYSQL_PASSWORD")
 db = os.environ.get("MYSQL_DATABASE")
-# flask_secret=os.environ.get("FLASK_SECRET_KEY")
+flask_secret=os.environ.get("FLASK_SECRET_KEY")
 application.config['SQLALCHEMY_DATABASE_URI'] = f"mysql://{user}:{user_pwd}@mysql_db/{db}"
 application.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 application.config.update(
     TESTING=False
-    # SECRET_KEY=flask_secret
+    SECRET_KEY=flask_secret
 )
 db = SQLAlchemy(application)
 ckeditor = CKEditor(application)
