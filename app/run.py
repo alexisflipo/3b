@@ -1,13 +1,16 @@
-from flask import Flask, render_template
-from flask_admin import Admin
+from flask import Flask, render_template, abort, session, redirect, request, url_for
+from flask_admin import Admin, expose, AdminIndexView
 from flask_ckeditor import CKEditor, CKEditorField
 from flask_admin.contrib.sqla import ModelView
+from flask_admin.menu import MenuLink
 from flask_login import UserMixin, LoginManager, current_user
 from flask_sqlalchemy import SQLAlchemy
+from functools import lru_cache
 import os
 from dotenv import load_dotenv
+
 application = Flask(__name__)
-application.config['FLASK_ADMIN_SWATCH'] = 'cerulean'
+application.config["FLASK_ADMIN_SWATCH"] = "cerulean"
 load_dotenv()
 user=os.environ.get("MYSQL_USER")
 user_pwd=os.environ.get("MYSQL_PASSWORD")
@@ -20,15 +23,19 @@ application.config.update(
     SECRET_KEY=flask_secret
 )
 db = SQLAlchemy(application)
+
 ckeditor = CKEditor(application)
 
 login_manager = LoginManager()
-login_manager.login_view = 'auth.login'
+login_manager.session_protection = "strong"
+login_manager.login_view = "auth.login"
 login_manager.init_app(application)
+
 
 @login_manager.user_loader
 def load_user(user_id):
-    return Users.query.get(int(user_id))
+    return User.query.get(int(user_id))
+
 
 class Articles(db.Model):
     id = db.Column(db.BigInteger, primary_key=True)
@@ -36,42 +43,83 @@ class Articles(db.Model):
     description = db.Column(db.Text)
     images = db.Column(db.String(100))
     publish_date = db.Column(db.Date)
+
+
 class PostAdmin(ModelView):
+    def is_accessible(self):
+        return current_user.is_authenticated and current_user.is_admin
+
+    def inaccessible_callback(self, name, **kwargs):
+        return redirect(url_for("auth.login", next=request.url))
+
     form_overrides = dict(text=CKEditorField)
-    create_template = 'create.html'
-    edit_template = 'edit.html'
-class Users(UserMixin, db.Model):
+    create_template = "create.html"
+    edit_template = "edit.html"
+
+
+class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    email = db.Column(db.String(100),  unique=True)
+    email = db.Column(db.String(100), unique=True)
     name = db.Column(db.String(100))
-    password = db.Column(db.String(100))
-admin = Admin(application,name='3BackOffice', template_mode='bootstrap3')
-# admin.add_view(ModelView(Articles, db.session))
+    password = db.Column(db.String(255))
+    is_admin = db.Column(db.Boolean, default=False)
+
+# Modify admin view
+class MyAdminIndexView(AdminIndexView):
+    def is_accessible(self):
+        return current_user.is_authenticated and current_user.is_admin
+
+    def inaccessible_callback(self, name, **kwargs):
+
+        return redirect(url_for("auth.login", next=request.url))
+
+    @expose("/")
+    def index(self):
+        if not current_user.is_authenticated and current_user.is_admin:
+            return redirect(url_for("auth.login"))
+        return super(MyAdminIndexView, self).index()
+
+
+admin = Admin(
+    application,
+    name="3BackOffice",
+    template_mode="bootstrap3",
+    index_view=MyAdminIndexView(),
+)
 admin.add_view(PostAdmin(Articles, db.session))
-admin.add_view(PostAdmin(Users, db.session))
+admin.add_view(PostAdmin(User, db.session))
+admin.add_link(MenuLink(name="Logout", category="", url="/logout"))
+
 # blueprint for auth routes in our app
 from auth import auth as auth_blueprint
+
 application.register_blueprint(auth_blueprint)
 
 # blueprint for non-auth parts of app
 from main import main as main_blueprint
+
 application.register_blueprint(main_blueprint)
 
-@application.route('/')
+
+@lru_cache(maxsize=1024)
+@application.route("/")
 def index():
     articles = Articles.query.all()
     if current_user.is_authenticated:
-        return render_template('articles.html', articles=articles)
+        return render_template("articles.html", articles=articles)
     else:
-        return render_template('index.html')
+        return render_template("index.html")
 
-@application.route('/<titre>', methods=['GET'])
+
+@lru_cache(maxsize=1024)
+@application.route("/<titre>", methods=["GET"])
 def articles(titre):
     article = Articles.query.filter_by(titre=titre).first_or_404()
     description = article.description
-    return render_template('article.html', titre=article, description=description )
+    return render_template("article.html", titre=article, description=description)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     ENVIRONMENT_DEBUG = os.environ.get("APP_DEBUG", True)
     ENVIRONMENT_PORT = os.environ.get("APP_PORT", 5090)
     application.run(port=ENVIRONMENT_PORT)

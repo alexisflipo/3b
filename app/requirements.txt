@@ -19,3 +19,5 @@ Flask-WTF==1.0.1
 Flask-CKEditor==0.4.6
 Flask-Login==0.6.1
 python-dotenv==0.20.0
+black==22.6.0
+click==8.1.3
