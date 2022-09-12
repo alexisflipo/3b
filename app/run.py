@@ -64,7 +64,7 @@ class User(UserMixin, db.Model):
     password = db.Column(db.String(255))
     is_admin = db.Column(db.Boolean, default=False)
 
-
+# Modify admin view
 class MyAdminIndexView(AdminIndexView):
     def is_accessible(self):
         return current_user.is_authenticated and current_user.is_admin
