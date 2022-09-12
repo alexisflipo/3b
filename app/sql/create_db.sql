@@ -5,16 +5,17 @@ CREATE DATABASE IF NOT EXISTS final_project
 
 USE final_project;
 
-CREATE TABLE IF NOT EXISTS users (
+CREATE TABLE IF NOT EXISTS user (
 	id INTEGER auto_increment NOT NULL UNIQUE,
 	email varchar(100) NOT NULL UNIQUE,
   name varchar(100) NOT NULL,
-	password varchar(100) NOT NULL,
-	CONSTRAINT Users_PK PRIMARY KEY (id)
+	password varchar(255) NOT NULL,
+  is_admin boolean DEFAULT false,
+	CONSTRAINT User_PK PRIMARY KEY (id)
 )
 ENGINE=InnoDB;
--- `3b`.articles definition
 
+-- `3b`.articles definition
 
 CREATE TABLE IF NOT EXISTS articles (
   description text NOT NULL,

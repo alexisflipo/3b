@@ -1,9 +1,11 @@
 from flask import Blueprint, render_template, redirect, url_for, request, flash
 from werkzeug.security import generate_password_hash, check_password_hash
-from run import db, Users
+from run import db, User
 from flask_login import login_user, logout_user, login_required
+from functools import lru_cache
 auth = Blueprint('auth', __name__)
 
+@lru_cache(maxsize=1024)
 @auth.route('/login')
 def login():
     return render_template('login.html')
@@ -12,14 +14,15 @@ def login():
 def login_post():
     email = request.form.get('email')
     password = request.form.get('password')
-    user = Users.query.filter_by(email=email).first()
-
+    user = User.query.filter_by(email=email).first()
     if not user or not check_password_hash(user.password, password):
-        flash('Please check your login details and try again.')
+        flash('Please check your login details and try again.', 'error')
         return redirect(url_for('auth.login')) 
     login_user(user)
     return redirect(url_for('main.profile'))
 
+
+@lru_cache(maxsize=1024)
 @auth.route('/signup')
 def signup():
     return render_template('signup.html')
@@ -30,12 +33,12 @@ def signup_post():
     name = request.form.get('name')
     password = request.form.get('password')
 
-    user = Users.query.filter_by(email=email).first()
+    user = User.query.filter_by(email=email).first()
     if user: 
-        flash('Email address already exists')
+        flash('Email address already exists', 'error')
         return redirect(url_for('auth.signup'))
 
-    new_user = Users(email=email, name=name, password=generate_password_hash(password, method='sha256'))
+    new_user = User(email=email, name=name, password=generate_password_hash(password, method='sha256'))
 
     db.session.add(new_user)
     db.session.commit()
