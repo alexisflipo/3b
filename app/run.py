@@ -16,7 +16,7 @@ flask_secret=os.environ.get("FLASK_SECRET_KEY")
 application.config['SQLALCHEMY_DATABASE_URI'] = f"mysql://{user}:{user_pwd}@mysql_db/{db}"
 application.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 application.config.update(
-    TESTING=False
+    TESTING=False,
     SECRET_KEY=flask_secret
 )
 db = SQLAlchemy(application)
