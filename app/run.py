@@ -19,8 +19,9 @@ flask_secret=os.environ.get("FLASK_SECRET_KEY")
 application.config['SQLALCHEMY_DATABASE_URI'] = f"mysql://{user}:{user_pwd}@mysql_db/{db}"
 application.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 application.config.update(
-    TESTING=False,
-    SECRET_KEY=flask_secret
+    TESTING=True,
+    # SECRET_KEY=flask_secret
+    SECRET_KEY='afb8e4199994c69921a67bba559004a4'
 )
 db = SQLAlchemy(application)
 
@@ -64,6 +65,20 @@ class User(UserMixin, db.Model):
     password = db.Column(db.String(255))
     is_admin = db.Column(db.Boolean, default=False)
 
+class Books(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(255), unique=True)
+    author = db.Column(db.String(100))
+    rating = db.Column(db.Float)
+    description = db.Column(db.String(10000), default=False)
+    language = db.Column(db.String(100))
+    isbn = db.Column(db.String(100))
+    genres = db.Column(db.String(100))
+    numRatings = db.Column(db.Float)
+    likedPercent = db.Column(db.Float)
+    coverImg = db.Column(db.String(10000))
+    category = db.Column(db.Integer)
+    
 # Modify admin view
 class MyAdminIndexView(AdminIndexView):
     def is_accessible(self):
@@ -88,6 +103,7 @@ admin = Admin(
 )
 admin.add_view(PostAdmin(Articles, db.session))
 admin.add_view(PostAdmin(User, db.session))
+admin.add_view(PostAdmin(Books, db.session))
 admin.add_link(MenuLink(name="Logout", category="", url="/logout"))
 
 # blueprint for auth routes in our app
