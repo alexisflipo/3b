@@ -30,7 +30,7 @@ ENGINE=InnoDB;
 
 
 CREATE TABLE IF NOT EXISTS `books` (
-  `id` int(11) NOT NULL,
+  `id` INTEGER auto_increment NOT NULL UNIQUE,
   `title` varchar(255) DEFAULT NULL,
   `rating` float DEFAULT NULL,
   `author` varchar(100) DEFAULT NULL,
