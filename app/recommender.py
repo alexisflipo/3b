@@ -6,7 +6,8 @@ from sklearn.cluster import KMeans
 from sklearn.neighbors import NearestNeighbors
 from sklearn.preprocessing import MinMaxScaler
 from dotenv import load_dotenv
-
+import pickle
+from sqlalchemy import create_engine
 def connect_db() -> pd.DataFrame:
     load_dotenv()
     conn = pymysql.connect(
@@ -53,6 +54,10 @@ def nearest_neighbors_modelisation(data:pd.DataFrame):
     model = NearestNeighbors(n_neighbors=10, algorithm='ball_tree')
     model.fit(data)
     dist, idlist = model.kneighbors(data)
+    with open ('./distance.sav', 'wb') as f:
+        pickle.dump(dist, f)
+    with open ('./idlist.sav', 'wb') as f:
+        pickle.dump(idlist, f)
     return dist, idlist
 
 def book_recommendation_engine(book_name):
@@ -66,9 +71,11 @@ def book_recommendation_engine(book_name):
     return df_copy.iloc[idlist[book_id]]
 
 def insert_to_db(df:pd.DataFrame):
-    df.index +=1
+    load_dotenv()
+    df = df.reset_index().rename(columns={'index': 'id'})
+    df.id = df.id.apply(lambda x : x+1)
     user=os.environ.get("MYSQL_USER")
-    db = os.environ.get("MYSQL_DATABASE"),
+    db = os.environ.get("MYSQL_DATABASE")
     passwd=os.environ.get("MYSQL_PASSWORD")
     sqlEngine       = create_engine(f"mysql+pymysql://{user}:{passwd}@mysql_db/{db}?charset=utf8mb4")
     dbConnection    = sqlEngine.connect()
@@ -88,6 +95,7 @@ def main():
     if not os.path.exists("./finalized_kmeans.sav"):
         df_copy = connect_db()
         X = preprocess_data(df_copy)
+        X = X.drop(['category'], axis=1)
         encoded_data = normalize_data(X)
         df_kmeans = generate_df_for_training(encoded_data)
         kmeans = kmeans_model_elaboration(encoded_data)
@@ -95,8 +103,6 @@ def main():
         category_predictions = predict(df_copy, df_kmeans, encoded_data, kmeans)
         dist, idlist = nearest_neighbors_modelisation(df_kmeans)
         insert_to_db(df_copy)
-    else:
-        unserialize_kmeans
    
 
 

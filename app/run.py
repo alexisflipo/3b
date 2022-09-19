@@ -116,7 +116,6 @@ from main import main as main_blueprint
 
 application.register_blueprint(main_blueprint)
 
-
 @lru_cache(maxsize=1024)
 @application.route("/")
 def index():

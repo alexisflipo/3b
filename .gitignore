@@ -18,7 +18,13 @@ mysql.env
 __pycache__/
 *.py[cod]
 *$py.class
-
+app/.bash_history
+app/distance.sav
+app/finalized_kmeans.sav
+app/idlist.sav
+app/ml/distance.sav
+app/ml/distances_knn.csv
+app/ml/idlist.sav
 # C extensions
 *.so
 
