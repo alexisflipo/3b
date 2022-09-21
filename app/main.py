@@ -1,45 +1,36 @@
 from flask import Blueprint, render_template, redirect, url_for, request, flash
 from flask_login import login_required, current_user
 from functools import lru_cache
-import recommender
+from recommender import unserialize_list
 import pickle
 main = Blueprint("main", __name__)
-
-@main.route("/profile")
+import logging
+@main.route("/predict")
 @login_required
-def profile():
+def predict():
     return render_template("profile.html", name=current_user.name)
 
 from run import db, Books
 
-@main.route("/profile", methods=["POST"])
-def profile_post():
+@main.route("/predict", methods=["POST"])
+def predict_post():
     name = request.form.get("book_name")
     books = Books.query.filter_by(Books.title.contains(name)).first_or_404()
     if not books:
         flash("Please check you wrote the right name", "error")
-        return redirect(url_for("main.profile"))
+        return redirect(url_for("main.predict"))
     return redirect(url_for("main.books"))
 
 
 @lru_cache(maxsize=1024)
 @main.route("/books", methods=['GET', 'POST'])
 def books():
-    recommender.main()
-    with open('./distance.sav', 'rb') as f:
-        dist = pickle.load(f)
-    with open('./idlist.sav', 'rb') as f:
-        idlist = pickle.load(f)
-    
-    book_list_name = []
-    name = request.form.get("book_name")
-    book = Books.query.filter(Books.title.contains(name)).first_or_404()
-    book_id = book.id
-    for newid in idlist[book_id]:
-        book_list_name.append(Books.query.filter_by(id=newid).first_or_404())
+    dist =  unserialize_list('./distance.sav')
+    idlist = unserialize_list('./idlist.sav')
     books = []
-    for name in book_list_name:
-        books.append(Books.query.filter(Books.title.contains(name)).first_or_404())
+    name = request.form.get("book_name")
+    book_id = Books.query.filter(Books.title.contains(name)).first().id
+    for newid in idlist[book_id]:
+        books.append(Books.query.filter_by(id=newid).first())
     
     return render_template("books.html", books=books)
-    # return render_template("books.html", titre=books, url=url,ratings = ratings,description=description)

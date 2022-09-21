@@ -24,6 +24,7 @@
             <div class="flex items-center justify-center mt-6 text-gray-600 capitalize dark:text-gray-300">
               {% if current_user.is_authenticated %}
                 <a href="{{ url_for('index') }}" class="border-b-2 border-transparent hover:text-neutral-100 hover:border-slate-50 mx-1.5 sm:mx-6">Home</a>
+                <a href="{{ url_for('main.predict') }}" class="border-b-2 border-transparent hover:text-neutral-100 hover:border-slate-50 mx-1.5 sm:mx-6">Predict</a>
                 <a href="#" class="border-b-2 border-transparent hover:text-neutral-100 hover:border-slate-50 mx-1.5 sm:mx-6">Features</a>
                 <a href="#" class="border-b-2 border-transparent hover:text-neutral-100 hover:border-slate-50 mx-1.5 sm:mx-6">About</a>
                 <a href="{{ url_for('auth.logout') }}" class="border-b-2 border-transparent hover:text-neutral-100 hover:border-slate-50 mx-1.5 sm:mx-6">Logout</a>

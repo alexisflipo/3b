@@ -8,7 +8,7 @@ from flask_sqlalchemy import SQLAlchemy
 from functools import lru_cache
 import os
 from dotenv import load_dotenv
-
+import threading
 application = Flask(__name__)
 application.config["FLASK_ADMIN_SWATCH"] = "cerulean"
 load_dotenv()
@@ -19,9 +19,8 @@ flask_secret=os.environ.get("FLASK_SECRET_KEY")
 application.config['SQLALCHEMY_DATABASE_URI'] = f"mysql://{user}:{user_pwd}@mysql_db/{db}"
 application.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 application.config.update(
-    TESTING=True,
-    # SECRET_KEY=flask_secret
-    SECRET_KEY='afb8e4199994c69921a67bba559004a4'
+    TESTING=False,
+    SECRET_KEY=flask_secret
 )
 db = SQLAlchemy(application)
 
@@ -133,8 +132,11 @@ def articles(titre):
     description = article.description
     return render_template("article.html", titre=article, description=description)
 
+import recommender
+
 
 if __name__ == "__main__":
     ENVIRONMENT_DEBUG = os.environ.get("APP_DEBUG", True)
     ENVIRONMENT_PORT = os.environ.get("APP_PORT", 5090)
-    application.run(port=ENVIRONMENT_PORT)
+    threading.Thread(target=recommender.main)
+    application.run(port=ENVIRONMENT_PORT, threaded=True)

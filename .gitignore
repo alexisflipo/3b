@@ -13,6 +13,7 @@ instance/*
 .env
 web.env
 mysql.env
+app/__pycache__/
 ### Flask.Python Stack ###
 # Byte-compiled / optimized / DLL files
 __pycache__/

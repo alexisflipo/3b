@@ -1,5 +1,7 @@
 import os
 import pymysql
+from yellowbrick.cluster import KElbowVisualizer, InterclusterDistance
+from matplotlib import pyplot as plt
 import pandas as pd
 import numpy as np
 from sklearn.cluster import KMeans
@@ -8,20 +10,21 @@ from sklearn.preprocessing import MinMaxScaler
 from dotenv import load_dotenv
 import pickle
 from sqlalchemy import create_engine
+import mlflow
+
 def connect_db() -> pd.DataFrame:
     load_dotenv()
-    conn = pymysql.connect(
-        host='mysql_db',
-        port=3306,
-        user=os.environ.get("MYSQL_USER"),
-        db = os.environ.get("MYSQL_DATABASE"),
-        passwd=os.environ.get("MYSQL_PASSWORD"))
+    user=os.environ.get("MYSQL_USER")
+    db = os.environ.get("MYSQL_DATABASE")
+    passwd=os.environ.get("MYSQL_PASSWORD")
+    host = 'mysql_db'
+    sqlEngine       = create_engine(f"mysql+pymysql://{user}:{passwd}@{host}/{db}")
+    dbConnection    = sqlEngine.connect()
 
     df = pd.read_sql_query("SELECT * FROM final_project.books",
-    conn)
+    con=dbConnection)
     df_copy = df.copy()
     df_copy = df_copy.drop(['id'], axis=1)
-    conn.close()
     return df_copy
 
 def preprocess_data(df: pd.DataFrame) -> pd.DataFrame:
@@ -60,24 +63,15 @@ def nearest_neighbors_modelisation(data:pd.DataFrame):
         pickle.dump(idlist, f)
     return dist, idlist
 
-def book_recommendation_engine(book_name):
-    book_list_name = []
-    book_list_id = []
-    book_id = df_copy[df_copy['title'].str.contains(book_name, case=False)].index
-    book_id = book_id[0]
-    for newid in idlist[book_id]:
-        book_list_name.append(df_copy.loc[newid].title)
-#     return book_list_name
-    return df_copy.iloc[idlist[book_id]]
 
 def insert_to_db(df:pd.DataFrame):
     load_dotenv()
     df = df.reset_index().rename(columns={'index': 'id'})
-    df.id = df.id.apply(lambda x : x+1)
     user=os.environ.get("MYSQL_USER")
     db = os.environ.get("MYSQL_DATABASE")
     passwd=os.environ.get("MYSQL_PASSWORD")
-    sqlEngine       = create_engine(f"mysql+pymysql://{user}:{passwd}@mysql_db/{db}?charset=utf8mb4")
+    host = 'mysql_db'
+    sqlEngine       = create_engine(f"mysql+pymysql://{user}:{passwd}@{host}/{db}?charset=utf8mb4")
     dbConnection    = sqlEngine.connect()
     df.to_sql(name='books', con = dbConnection, if_exists = 'replace', chunksize = 1000)
     
@@ -85,26 +79,63 @@ def serialize_kmeans(kmeans):
     with open ('./finalized_kmeans.sav', 'wb') as f:
         pickle.dump(kmeans, f)
  
-def unserialize_kmeans():
-    with open('./finalized_kmeans.sav', 'rb') as f:
+def unserialize_kmeans(path):
+    with open(path, 'rb') as f:
         loaded_model = pickle.load(f)
     return loaded_model
     
+def unserialize_list(path:os.PathLike):
+    with open(path, 'rb') as f:
+        return pickle.load(f)
+
+def set_experiment_if_not_exists(experiment_name):
+    existing_exp = mlflow.get_experiment_by_name(experiment_name)
+    if not existing_exp:
+        mlflow.create_experiment(experiment_name)
+    mlflow.set_experiment(experiment_name)
+
+def generate_silhouette_img(encoded_data):
+    fig = plt.figure(figsize=(15,10))
+    model = KMeans()
+    visualizer = KElbowVisualizer(model, k=(2,10), metric='silhouette')
+
+    visualizer.fit(encoded_data)        # Fit the data to the visualizer
+    visualizer.show()  
+    kmeans_img = "silhouette.jpg"
+    fig.savefig(kmeans_img)
     
+def generate_interclusterdistance_img(encoded_data):
+    fig = plt.figure(figsize=(15,10))
+    model = KMeans(5)
+    visualizer = InterclusterDistance(model)
+    visualizer.fit(encoded_data)        # Fit the data to the visualizer
+    visualizer.show() 
+    distance_img = "interclusterdistance.jpg"
+    fig.savefig(distance_img)
+
+from run import application   
+@application.before_first_request    
 def main():
     if not os.path.exists("./finalized_kmeans.sav"):
         df_copy = connect_db()
         X = preprocess_data(df_copy)
         X = X.drop(['category'], axis=1)
         encoded_data = normalize_data(X)
+        generate_silhouette_img(encoded_data)
+        generate_interclusterdistance_img(encoded_data)
         df_kmeans = generate_df_for_training(encoded_data)
         kmeans = kmeans_model_elaboration(encoded_data)
         serialize_kmeans(kmeans)
+        score = kmeans.score(df_kmeans)
         category_predictions = predict(df_copy, df_kmeans, encoded_data, kmeans)
-        dist, idlist = nearest_neighbors_modelisation(df_kmeans)
+        nearest_neighbors_modelisation(df_kmeans)
         insert_to_db(df_copy)
-   
-
-
-if __name__ == '__main__':
-    main()
+        mlflow.set_tracking_uri('http://mlflow-app.beginsbetter.com:8000')
+        set_experiment_if_not_exists('books-recommender-1')
+        experiment = mlflow.get_experiment_by_name("books-recommender-1")
+        with mlflow.start_run(experiment_id=experiment.experiment_id):
+            # kmeans = unserialize_kmeans('/Users/thor/code/alexisflipo/3b/finalized_kmeans.sav')
+            mlflow.log_metric('Score sklearn', score)
+            mlflow.log_artifact('./silhouette.jpg', artifact_path='silhouette')
+            mlflow.log_artifact('./interclusterdistance.jpg', artifact_path='interclusterdistance')
+            mlflow.sklearn.log_model(sk_model=kmeans, artifact_path='', registered_model_name='kmeans')
