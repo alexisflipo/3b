@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% block content %}
+<!-- <div class="w-60 h-full shadow-md bg-white px-1 absolute">
+    {% for book in books %}
+    <ul class="relative">
+      <li class="relative">
+        <a class="flex items-center text-sm py-4 px-6 h-12 overflow-hidden text-gray-700 text-ellipsis whitespace-nowrap rounded hover:text-gray-900 hover:bg-gray-100 transition duration-300 ease-in-out" href="{{url_for('main.books', titre=book.title)}}" data-mdb-ripple="true" data-mdb-ripple-color="dark">{{ book.title }}</a>
+      </li>
+    </ul>
+    {% endfor %}
+</div> -->
+
+<section class="bg-white">
+  <div class="container px-6 py-10 mx-auto">
+      <h1 class="text-3xl font-semibold text-gray-800 capitalize lg:text-4xl dark:text-white">Top 10 recommended</h1>
+<div class="grid grid-cols-1 gap-8 mt-8 md:mt-16 md:grid-cols-2">
+  {% for book in books %}
+  <div class="lg:flex">
+      <img class="object-cover w-full h-56 rounded-lg lg:w-64" src="{{book.coverImg}}" alt="">
+
+      <div class="flex flex-col justify-between py-6 lg:mx-6">
+          <a href="#" class="text-xl font-semibold">
+              {{book.title}}
+          </a>
+          <span class="text-sm ">{{book.rating}}</span>
+          <span class="text-sm text-gray-500 dark:text-gray-300">{{book.genres}}</span>
+      </div>
+  </div>
+  {% endfor %}
+</div>
+</div>
+</section>
+{% endblock %}

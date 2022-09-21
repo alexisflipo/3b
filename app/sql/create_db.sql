@@ -3,6 +3,7 @@ CREATE DATABASE IF NOT EXISTS final_project
   DEFAULT CHARACTER SET utf8
   DEFAULT COLLATE utf8_general_ci;
 
+
 USE final_project;
 
 CREATE TABLE IF NOT EXISTS user (
@@ -26,3 +27,21 @@ CREATE TABLE IF NOT EXISTS articles (
   PRIMARY KEY (`id`)
 )
 ENGINE=InnoDB;
+
+
+CREATE TABLE IF NOT EXISTS `books` (
+  `id` INTEGER auto_increment NOT NULL UNIQUE,
+  `title` varchar(255) DEFAULT NULL,
+  `rating` float DEFAULT NULL,
+  `author` varchar(100) DEFAULT NULL,
+  `description` varchar(10000) DEFAULT NULL,
+  `language` varchar(100) DEFAULT NULL,
+  `isbn` varchar(100) DEFAULT NULL,
+  `genres` varchar(100) DEFAULT NULL,
+  `numRatings` float DEFAULT NULL,
+  `likedPercent` float DEFAULT NULL,
+  `coverImg` varchar(10000) DEFAULT NULL,
+  `category` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+									

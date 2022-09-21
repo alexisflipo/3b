@@ -28,4 +28,4 @@ USER www
 
 EXPOSE 5090
 
-CMD [ "gunicorn", "-w", "4", "--bind", "0.0.0.0:5090", "wsgi"]
+CMD [ "gunicorn", "-w", "4", "--timeout", "240", "--bind", "0.0.0.0:5090", "wsgi"]

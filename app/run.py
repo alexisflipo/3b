@@ -8,7 +8,7 @@ from flask_sqlalchemy import SQLAlchemy
 from functools import lru_cache
 import os
 from dotenv import load_dotenv
-
+import threading
 application = Flask(__name__)
 application.config["FLASK_ADMIN_SWATCH"] = "cerulean"
 load_dotenv()
@@ -64,6 +64,20 @@ class User(UserMixin, db.Model):
     password = db.Column(db.String(255))
     is_admin = db.Column(db.Boolean, default=False)
 
+class Books(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(255), unique=True)
+    author = db.Column(db.String(100))
+    rating = db.Column(db.Float)
+    description = db.Column(db.String(10000), default=False)
+    language = db.Column(db.String(100))
+    isbn = db.Column(db.String(100))
+    genres = db.Column(db.String(100))
+    numRatings = db.Column(db.Float)
+    likedPercent = db.Column(db.Float)
+    coverImg = db.Column(db.String(10000))
+    category = db.Column(db.Integer)
+    
 # Modify admin view
 class MyAdminIndexView(AdminIndexView):
     def is_accessible(self):
@@ -88,6 +102,7 @@ admin = Admin(
 )
 admin.add_view(PostAdmin(Articles, db.session))
 admin.add_view(PostAdmin(User, db.session))
+admin.add_view(PostAdmin(Books, db.session))
 admin.add_link(MenuLink(name="Logout", category="", url="/logout"))
 
 # blueprint for auth routes in our app
@@ -99,7 +114,6 @@ application.register_blueprint(auth_blueprint)
 from main import main as main_blueprint
 
 application.register_blueprint(main_blueprint)
-
 
 @lru_cache(maxsize=1024)
 @application.route("/")
@@ -118,8 +132,11 @@ def articles(titre):
     description = article.description
     return render_template("article.html", titre=article, description=description)
 
+import recommender
+
 
 if __name__ == "__main__":
     ENVIRONMENT_DEBUG = os.environ.get("APP_DEBUG", True)
     ENVIRONMENT_PORT = os.environ.get("APP_PORT", 5090)
-    application.run(port=ENVIRONMENT_PORT)
+    threading.Thread(target=recommender.main)
+    application.run(port=ENVIRONMENT_PORT, threaded=True)

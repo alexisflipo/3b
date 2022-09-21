@@ -3,19 +3,29 @@ mysql-data
 # Edit at https://www.toptal.com/developers/gitignore?templates=flask,python,visualstudiocode
 mysql.env
 web.env
+app/ml/books_db.csv
 ### Flask ###
+.DS_Store
+app/.DS_Store
 instance/*
 !instance/.gitignore
 .webassets-cache
 .env
 web.env
 mysql.env
+app/__pycache__/
 ### Flask.Python Stack ###
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
 *$py.class
-
+app/.bash_history
+app/distance.sav
+app/finalized_kmeans.sav
+app/idlist.sav
+app/ml/distance.sav
+app/ml/distances_knn.csv
+app/ml/idlist.sav
 # C extensions
 *.so
 

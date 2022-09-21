@@ -23,6 +23,21 @@ services:
     volumes:
       - ./data/certbot/conf:/etc/letsencrypt
       - ./data/certbot/www:/var/www/certbot
+  mlflow_server:
+        restart: always
+        build: ./mlflow
+        image: mlflow_img
+        container_name: mlflow_container
+        ports:
+            - 8000:5000
+        depends_on:
+            - database  
+        networks:
+            - frontend
+            - backend
+        env_file:
+            - web.env
+        command: mlflow server --backend-store-uri mysql+pymysql://${MYSQL_USER}:${MYSQL_PASSWORD}@mysql_db:3306/${MYSQL_DATABASE} --artifacts-destination s3://mlflow-bucket-simplon/mlflow/ --serve-artifacts -h 0.0.0.0 -p 5000
   flask:
     build:
       context: app
@@ -49,7 +64,7 @@ services:
     ports:
       - 3306:3306
     env_file:
-      - mysql.env
+      - web.env
     volumes:
       - ./mysql-data:/var/lib/mysql
       - mysql-data-config:/etc/mysql
