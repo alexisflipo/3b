@@ -10,28 +10,9 @@ on:
 
   workflow_dispatch:
 
-# env:
-#   REGISTRY: ${{ secrets.DIGITAL_OCEAN_REGISTRY }}
-#   IMAGE_NAME: "3b_app"
 
 jobs:
-  # build:
-  #   runs-on: ubuntu-20.04
-
-  #   steps:
-  #     - name: Checkout files
-  #       uses: actions/checkout@v2
-  #     - name: Build multiple images via docker-compose
-  #       env:
-  #         MYSQL_DATABASE: ${{ secrets.MYSQL_DATABASE }}
-  #     # So you don't have to use root, but you can if you like
-  #         MYSQL_USER: ${{ secrets.MYSQL_USER }}
-  #     # You can use whatever password you like
-  #         MYSQL_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}
-  #         MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
-  #       # run: cd app/ && docker build -t $(echo $REGISTRY)/$(echo $IMAGE_NAME):$(echo $GITHUB_SHA | head -c7) .
-  #       run: docker-compose build 
-
+  
   deploy:
     # needs: build
     runs-on: ubuntu-20.04
@@ -64,6 +45,7 @@ jobs:
         AWS_ACCESS_KEY_ID: ${{secrets.AWS_ACCESS_KEY_ID}}
         AWS_SECRET_ACCESS_KEY: ${{secrets.AWS_SECRET_ACCESS_KEY}}
         AWS_DEFAULT_REGION: ${{secrets.AWS_DEFAULT_REGION}}
+        FLASK_SECRET_KEY: ${{secrets.FLASK_SECRET_KEY}}
         host: ${{ secrets.HOST }}
         username: ${{ secrets.DROPLET_USER }}
         key: ${{ secrets.SSH }}
@@ -72,26 +54,15 @@ jobs:
         command_timeout:  20m
         envs: GITHUB_SHA
         script: |
+          cd app/3b/
           touch web.env
           echo MYSQL_DATABASE=${{ secrets.MYSQL_DATABASE }} >> web.env
+          echo MYSQL_PASSWORD=${{ secrets.MYSQL_PASSWORD }} >> web.env
           echo MYSQL_USER=${{ secrets.MYSQL_USER }} >> web.env
           echo MYSQL_ROOT_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }} >> web.env
           echo AWS_ACCESS_KEY_ID=${{secrets.AWS_ACCESS_KEY_ID}} >> web.env
           echo AWS_SECRET_ACCESS_KEY= ${{secrets.AWS_SECRET_ACCESS_KEY}} >> web.env
           echo AWS_DEFAULT_REGION= ${{secrets.AWS_DEFAULT_REGION}} >> web.env
-          cd app/3b
+          echo FLASK_SECRET_KEY=${{secrets.FLASK_SECRET_KEY}} >> web.env
           docker-compose build --no-cache
           docker-compose up -d
-
-      # for f in mysql.env web.env; do echo MYSQL_DATABASE=${{ secrets.MYSQL_DATABASE }} >> $f; done
-      # for f in mysql.env web.env; do echo MYSQL_USER=${{ secrets.MYSQL_USER }} >> $f; done
-      # for f in mysql.env web.env; do echo MYSQL_PASSWORD=${{ secrets.MYSQL_PASSWORD }} >> $f; done
-      # MYSQL_ROOT_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }} >> mysql.env
-      # - name: Log in to DigitalOcean Container Registry with short-lived credentials
-      #   run: doctl registry login --expiry-seconds 600
-
-      # - name: Remove all old images
-      #   run: if [ ! -z "$(doctl registry repository list | grep "$(echo $IMAGE_NAME)")" ]; then doctl registry repository delete-manifest $(echo $IMAGE_NAME) $(doctl registry repository list-tags $(echo $IMAGE_NAME) | grep -o "sha.*") --force; else echo "No repository"; fi
-
-      # - name: Push image to DigitalOcean Container Registry
-      #   run: docker push $(echo $REGISTRY)/$(echo $IMAGE_NAME):$(echo $GITHUB_SHA | head -c7)

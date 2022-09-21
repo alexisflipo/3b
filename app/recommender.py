@@ -130,7 +130,7 @@ def main():
         category_predictions = predict(df_copy, df_kmeans, encoded_data, kmeans)
         nearest_neighbors_modelisation(df_kmeans)
         insert_to_db(df_copy)
-        mlflow.set_tracking_uri('http://mlflow-app.beginsbetter.com:8000')
+        mlflow.set_tracking_uri('http://mlflow-app.beginsbetter.com:80')
         set_experiment_if_not_exists('books-recommender-1')
         experiment = mlflow.get_experiment_by_name("books-recommender-1")
         with mlflow.start_run(experiment_id=experiment.experiment_id):
