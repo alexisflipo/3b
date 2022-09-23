@@ -14,7 +14,6 @@ on:
 jobs:
   
   deploy:
-    # needs: build
     runs-on: ubuntu-20.04
     if: github.ref == 'refs/heads/master'
     steps:
@@ -26,10 +25,10 @@ jobs:
         username: ${{ secrets.DROPLET_USER }}
         key: ${{ secrets.SSH }}
         PORT: ${{ secrets.PORT }}
-        # password: ${{ secrets.PASSHPRASE }}
         envs: GITHUB_SHA
         script: |
           cd app/3b
+          git restore .
           git pull origin master
 
     - name: Up docker-compose
@@ -37,9 +36,7 @@ jobs:
       with:
         token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
         MYSQL_DATABASE: ${{ secrets.MYSQL_DATABASE }}
-    # So you don't have to use root, but you can if you like
         MYSQL_USER: ${{ secrets.MYSQL_USER }}
-    # You can use whatever password you like
         MYSQL_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}
         MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
         AWS_ACCESS_KEY_ID: ${{secrets.AWS_ACCESS_KEY_ID}}
@@ -56,13 +53,13 @@ jobs:
         script: |
           cd app/3b/
           touch web.env
-          echo MYSQL_DATABASE=${{ secrets.MYSQL_DATABASE }} >> web.env
-          echo MYSQL_PASSWORD=${{ secrets.MYSQL_PASSWORD }} >> web.env
-          echo MYSQL_USER=${{ secrets.MYSQL_USER }} >> web.env
-          echo MYSQL_ROOT_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }} >> web.env
+          echo MYSQL_DATABASE='${{ secrets.MYSQL_DATABASE }}' >> web.env
+          echo MYSQL_PASSWORD='${{ secrets.MYSQL_PASSWORD }}' >> web.env
+          echo MYSQL_USER='${{ secrets.MYSQL_USER }}' >> web.env
+          echo MYSQL_ROOT_PASSWORD='${{ secrets.MYSQL_ROOT_PASSWORD }}' >> web.env
           echo AWS_ACCESS_KEY_ID=${{secrets.AWS_ACCESS_KEY_ID}} >> web.env
           echo AWS_SECRET_ACCESS_KEY= ${{secrets.AWS_SECRET_ACCESS_KEY}} >> web.env
-          echo AWS_DEFAULT_REGION= ${{secrets.AWS_DEFAULT_REGION}} >> web.env
-          echo FLASK_SECRET_KEY=${{secrets.FLASK_SECRET_KEY}} >> web.env
+          echo AWS_DEFAULT_REGION= '${{secrets.AWS_DEFAULT_REGION}}' >> web.env
+          echo FLASK_SECRET_KEY='${{secrets.FLASK_SECRET_KEY}}' >> web.env
           docker-compose build --no-cache
           docker-compose up -d
