@@ -15,6 +15,7 @@ import logging
 import traceback
 from flask_mail import Message
 from flask import jsonify
+
 def connect_db() -> pd.DataFrame:
     load_dotenv()
     user = os.environ.get("MYSQL_USER")
