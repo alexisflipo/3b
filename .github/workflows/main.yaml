@@ -63,6 +63,10 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{secrets.AWS_SECRET_ACCESS_KEY}}
           AWS_DEFAULT_REGION: ${{secrets.AWS_DEFAULT_REGION}}
           FLASK_SECRET_KEY: ${{secrets.FLASK_SECRET_KEY}}
+          MAIL_SERVER: ${{secrets.MAIL_SERVER}}
+          MAIL_PORT: ${{secrets.MAIL_PORT}}
+          MAIL_USERNAME: ${{secrets.MAIL_USERNAME}}
+          MAIL_PASSWORD: ${{secrets.MAIL_PASSWORD}}
           host: ${{ secrets.HOST }}
           username: ${{ secrets.DROPLET_USER }}
           key: ${{ secrets.SSH }}
@@ -81,5 +85,9 @@ jobs:
             echo AWS_SECRET_ACCESS_KEY= ${{secrets.AWS_SECRET_ACCESS_KEY}} >> web.env
             echo AWS_DEFAULT_REGION= '${{secrets.AWS_DEFAULT_REGION}}' >> web.env
             echo FLASK_SECRET_KEY='${{secrets.FLASK_SECRET_KEY}}' >> web.env
+            echo MAIL_SERVER=${{secrets.MAIL_SERVER}} >> web.env
+            echo MAIL_PORT=${{secrets.MAIL_PORT}} >> web.env
+            echo MAIL_USERNAME=${{secrets.MAIL_USERNAME}} >> web.env
+            echo MAIL_PASSWORD=${{secrets.MAIL_PASSWORD}} >> web.env
             docker-compose build --no-cache
             docker-compose up -d

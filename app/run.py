@@ -1,4 +1,4 @@
-from flask import Flask, render_template, abort, session, redirect, request, url_for
+from flask import Flask, render_template, abort, session, redirect, request, url_for, jsonify
 from flask_admin import Admin, expose, AdminIndexView
 from flask_ckeditor import CKEditor, CKEditorField
 from flask_admin.contrib.sqla import ModelView
@@ -9,19 +9,29 @@ from functools import lru_cache
 import os
 from dotenv import load_dotenv
 import threading
+from flask_mail import Mail, Message
+import logging
 application = Flask(__name__)
 application.config["FLASK_ADMIN_SWATCH"] = "cerulean"
 load_dotenv()
-user=os.environ.get("MYSQL_USER")
-user_pwd=os.environ.get("MYSQL_PASSWORD")
+user = os.environ.get("MYSQL_USER")
+user_pwd = os.environ.get("MYSQL_PASSWORD")
 db = os.environ.get("MYSQL_DATABASE")
-flask_secret=os.environ.get("FLASK_SECRET_KEY")
-application.config['SQLALCHEMY_DATABASE_URI'] = f"mysql://{user}:{user_pwd}@mysql_db/{db}"
-application.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-application.config.update(
-    TESTING=False,
-    SECRET_KEY=flask_secret
-)
+flask_secret = os.environ.get("FLASK_SECRET_KEY")
+application.config[
+    "SQLALCHEMY_DATABASE_URI"
+] = f"mysql://{user}:{user_pwd}@mysql_db/{db}"
+application.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+application.config['MAIL_USE_TLS'] = True
+application.config['MAIL_DEBUG'] = True
+application.config['MAIL_SERVER'] = os.environ.get('MAIL_SERVER')
+application.config['MAIL_PORT'] = os.environ.get('MAIL_PORT')
+application.config['MAIL_USERNAME'] = os.environ.get('MAIL_USERNAME')
+application.config['MAIL_PASSWORD'] = os.environ.get('MAIL_PASSWORD')
+application.config['MAIL_DEFAULT_SENDER'] = os.environ.get('MAIL_USERNAME')
+
+application.config.update(TESTING=False, SECRET_KEY=flask_secret)
+mail = Mail(application)
 db = SQLAlchemy(application)
 
 ckeditor = CKEditor(application)
@@ -64,6 +74,7 @@ class User(UserMixin, db.Model):
     password = db.Column(db.String(255))
     is_admin = db.Column(db.Boolean, default=False)
 
+
 class Books(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(255), unique=True)
@@ -77,7 +88,8 @@ class Books(db.Model):
     likedPercent = db.Column(db.Float)
     coverImg = db.Column(db.String(10000))
     category = db.Column(db.Integer)
-    
+
+
 # Modify admin view
 class MyAdminIndexView(AdminIndexView):
     def is_accessible(self):
@@ -115,14 +127,11 @@ from main import main as main_blueprint
 
 application.register_blueprint(main_blueprint)
 
+
 @lru_cache(maxsize=1024)
 @application.route("/")
 def index():
-    articles = Articles.query.all()
-    if current_user.is_authenticated:
-        return render_template("articles.html", articles=articles)
-    else:
-        return render_template("index.html")
+    return render_template("index.html")
 
 
 @lru_cache(maxsize=1024)
@@ -131,6 +140,7 @@ def articles(titre):
     article = Articles.query.filter_by(titre=titre).first_or_404()
     description = article.description
     return render_template("article.html", titre=article, description=description)
+
 
 import recommender
 

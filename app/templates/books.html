@@ -15,16 +15,17 @@
       <h1 class="text-3xl font-semibold text-gray-800 capitalize lg:text-4xl dark:text-white">Top 10 recommended</h1>
 <div class="grid grid-cols-1 gap-8 mt-8 md:mt-16 md:grid-cols-2">
   {% for book in books %}
-  <div class="lg:flex">
+    <div class="lg:flex">
+      {% if book.coverImg %}
       <img class="object-cover w-full h-56 rounded-lg lg:w-64" src="{{book.coverImg}}" alt="">
-
+      {% endif %}
       <div class="flex flex-col justify-between py-6 lg:mx-6">
           <a href="#" class="text-xl font-semibold">
               {{book.title}}
           </a>
           <span class="text-sm ">{{book.rating}}</span>
           <span class="text-sm text-gray-500 dark:text-gray-300">{{book.genres}}</span>
-      </div>
+    </div>
   </div>
   {% endfor %}
 </div>

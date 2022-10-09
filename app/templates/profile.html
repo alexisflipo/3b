@@ -3,18 +3,17 @@
 {% block content %}
 <section class="h-full gradient-form bg-gray-200 md:h-screen">
     <div class="container py-4 px-6 h-full mx-auto">
-      <h1 class="title text-center mt-2">
+      <h1 class="title text-center mt-2 mb-2">
         Welcome, {{ name }} !
       </h1>
-      <div class="flex justify-center items-center flex-wrap h-full g-6 text-gray-800">
+      <div class="flex justify-center items-center flex-wrap mt-8 g-6 text-gray-800">
         <div class="xl:w-10/12">
           <div class="block bg-white shadow-lg rounded-lg">
             <div class="flex justify-center lg:flex-wrap g-0 lg:flex-wrap g-0">
               <div class="lg:w-6/12 px-4 md:px-0">
                 <div class="md:p-6 md:mx-4">
                   <div class="text-center">
-                    <h3 class="text-center">Books recommendation system</h3>
-                    <h4 class="text-xl font-semibold mt-1 mb-12 pb-1">Write the last book's name you like so we can recommand the top 10 best book to read next</h4>
+                    <h5 class="text-xl font-semibold mt-1 mb-12 pb-1">Write the last book's name you liked to read so we can recommand similar books you might like reading</h5>
                   </div>
                   {% with messages = get_flashed_messages(with_categories=true) %}
                     {% if messages %}
@@ -24,7 +23,7 @@
                     {% endif %}
                   {% endwith %}
                   <form method="POST" action="/books">
-                    <p class="mb-4">What is the last book you've read</p>
+                    <p class="mb-4">What is the last book you've read ?</p>
                     <div class="mb-4">
                       <input
                         type="text"
@@ -34,6 +33,7 @@
                         placeholder="Book's name"
                       />
                     </div>
+                    <div id="menu-container" style="position:absolute; width: 500px;"></div>
                     <div class="text-center pt-1 mb-12 pb-1">
                       <button
                         class="inline-block px-6 py-2.5 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-blue-700 hover:shadow-lg focus:shadow-lg focus:outline-none focus:ring-0 active:shadow-lg transition duration-150 ease-in-out w-full mb-3"
@@ -60,4 +60,17 @@
       </div>
     </div>
   </section>
+  <script>
+    $( function() {
+      var availableTags = [
+          {% for book in books_name %}
+              "{{book}}",
+          {% endfor %}
+      ];
+      $( "#exampleFormControlInput1" ).autocomplete({
+        source: availableTags,
+        appendTo: '#menu-container'
+      });
+    });
+  </script>
 {% endblock %}
