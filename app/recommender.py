@@ -50,7 +50,7 @@ def preprocess_data(df: pd.DataFrame) -> pd.DataFrame:
     return df_copy_merged
 
 
-def normalize_data(data: pd.DataFrame) -> pd.DataFrame:
+def normalize_data(data: pd.DataFrame) -> np.ndarray:
     min_max_scaler = MinMaxScaler()
     features_encoded = min_max_scaler.fit_transform(data)
     return features_encoded
