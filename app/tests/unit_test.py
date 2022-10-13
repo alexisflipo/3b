@@ -2,7 +2,6 @@ import pytest
 import recommender
 import pandas as pd
 from pandas import Index
-from sklearn.preprocessing import MinMaxScaler
 import numpy as np
 
 data = {

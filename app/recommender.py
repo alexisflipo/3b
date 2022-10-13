@@ -15,6 +15,7 @@ import logging
 import traceback
 from flask_mail import Message
 from flask import jsonify
+from config import user, user_pwd, db
 
 def connect_db() -> pd.DataFrame:
     load_dotenv()
@@ -104,15 +105,11 @@ def nearest_neighbors_modelisation(data: pd.DataFrame):
     return dist, idlist
 
 
-def insert_to_db(df: pd.DataFrame):
-    load_dotenv()
+def insert_to_db(df: pd.DataFrame, user:str, user_pwd:str, db:str):
     df = df.reset_index().rename(columns={"index": "id"})
-    user = os.environ.get("MYSQL_USER")
-    db = os.environ.get("MYSQL_DATABASE")
-    passwd = os.environ.get("MYSQL_PASSWORD")
     host = "mysql_db"
     sqlEngine = create_engine(
-        f"mysql+pymysql://{user}:{passwd}@{host}/{db}?charset=utf8mb4"
+        f"mysql+pymysql://{user}:{user_pwd}@{host}/{db}?charset=utf8mb4"
     )
     dbConnection = sqlEngine.connect()
     df.to_sql(name="books", con=dbConnection, if_exists="replace", chunksize=1000)
@@ -186,9 +183,9 @@ def main():
         kmeans = kmeans_model_elaboration(encoded_data)
         serialize_kmeans(kmeans)
         score = kmeans.score(df_kmeans)
-        category_predictions = predict(df_copy, df_kmeans, encoded_data, kmeans)
+        predict(df_copy, df_kmeans, encoded_data, kmeans)
         nearest_neighbors_modelisation(df_kmeans)
-        insert_to_db(df_copy)
+        insert_to_db(df_copy, user, user_pwd, db)
         try:
             mlflow.set_tracking_uri("https://mlflow-app.beginsbetter.com:80")
             set_experiment_if_not_exists("books-recommender-1")

@@ -45,3 +45,10 @@ CREATE TABLE IF NOT EXISTS `books` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 									
+
+-- LOAD DATA INFILE '/home/books_db.csv'
+-- INTO TABLE books
+-- FIELDS TERMINATED BY ','
+-- ENCLOSED BY '"'
+-- LINES TERMINATED BY '\n'
+-- IGNORE 1 ROWS;

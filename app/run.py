@@ -7,30 +7,11 @@ from flask_login import UserMixin, LoginManager, current_user
 from flask_sqlalchemy import SQLAlchemy
 from functools import lru_cache
 import os
-from dotenv import load_dotenv
 import threading
-from flask_mail import Mail, Message
-import logging
-application = Flask(__name__)
-application.config["FLASK_ADMIN_SWATCH"] = "cerulean"
-load_dotenv()
-user = os.environ.get("MYSQL_USER")
-user_pwd = os.environ.get("MYSQL_PASSWORD")
-db = os.environ.get("MYSQL_DATABASE")
-flask_secret = os.environ.get("FLASK_SECRET_KEY")
-application.config[
-    "SQLALCHEMY_DATABASE_URI"
-] = f"mysql://{user}:{user_pwd}@mysql_db/{db}"
-application.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-application.config['MAIL_USE_TLS'] = True
-application.config['MAIL_DEBUG'] = True
-application.config['MAIL_SERVER'] = os.environ.get('MAIL_SERVER')
-application.config['MAIL_PORT'] = os.environ.get('MAIL_PORT')
-application.config['MAIL_USERNAME'] = os.environ.get('MAIL_USERNAME')
-application.config['MAIL_PASSWORD'] = os.environ.get('MAIL_PASSWORD')
-application.config['MAIL_DEFAULT_SENDER'] = os.environ.get('MAIL_USERNAME')
+from flask_mail import Mail
 
-application.config.update(TESTING=False, SECRET_KEY=flask_secret)
+application = Flask(__name__)
+application.config.from_pyfile('config.py')
 mail = Mail(application)
 db = SQLAlchemy(application)
 
@@ -96,7 +77,6 @@ class MyAdminIndexView(AdminIndexView):
         return current_user.is_authenticated and current_user.is_admin
 
     def inaccessible_callback(self, name, **kwargs):
-
         return redirect(url_for("auth.login", next=request.url))
 
     @expose("/")
@@ -132,15 +112,6 @@ application.register_blueprint(main_blueprint)
 @application.route("/")
 def index():
     return render_template("index.html")
-
-
-@lru_cache(maxsize=1024)
-@application.route("/<titre>", methods=["GET"])
-def articles(titre):
-    article = Articles.query.filter_by(titre=titre).first_or_404()
-    description = article.description
-    return render_template("article.html", titre=article, description=description)
-
 
 import recommender
 

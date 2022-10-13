@@ -2,10 +2,7 @@ from flask import Blueprint, render_template, redirect, url_for, request, flash
 from flask_login import login_required, current_user
 from functools import lru_cache
 from recommender import unserialize_list
-import pickle
-
 main = Blueprint("main", __name__)
-import logging
 
 
 @main.route("/predict",  methods=["GET"])
@@ -33,16 +30,26 @@ def predict_post():
 @lru_cache(maxsize=1024)
 @main.route("/books", methods=["GET", "POST"])
 def books():
-    dist = unserialize_list("./distance.sav")
-    idlist = unserialize_list("./idlist.sav")
-    books = []
-    name = request.form.get("book_name")
     try:
-        book_id = Books.query.filter(Books.title.contains(name)).first().id
-        for newid in idlist[book_id]:
-            books.append(Books.query.filter_by(id=newid).first())
-    except AttributeError:
-        flash("Please check you wrote the right name", "error")
+        dist = unserialize_list("./distance.sav")
+        idlist = unserialize_list("./idlist.sav")
+        books = []
+        name = request.form.get("book_name")
+        try:
+            book_id = Books.query.filter(Books.title.contains(name)).first().id
+            for newid in idlist[book_id]:
+                books.append(Books.query.filter_by(id=newid).first())
+            return render_template("books.html", books=books)
+        except AttributeError:
+            flash("Please check you wrote the right name", "error")
+            return redirect(url_for("main.predict"))
+    except Exception as e:
+        flash("Something went wrong", "error")
         return redirect(url_for("main.predict"))
 
-    return render_template("books.html", books=books)
+
+@lru_cache(maxsize=1024)
+@main.route("/books/<id>", methods=["GET"])
+def book(id):
+    book = Books.query.filter_by(id = id).first()
+    return render_template("book.html", book=book)
