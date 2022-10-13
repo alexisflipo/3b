@@ -9,7 +9,7 @@ user = os.environ.get("MYSQL_USER")
 user_pwd = os.environ.get("MYSQL_PASSWORD")
 db = os.environ.get("MYSQL_DATABASE")
 flask_secret = os.environ.get("FLASK_SECRET_KEY")
-SQLALCHEMY_DATABASE_URI = f"mysql://{user}:{user_pwd}@mysql_db/{db}"
+SQLALCHEMY_DATABASE_URI = f"mysql://{user}:{user_pwd}@mysql_db/{db}?charset=utf8"
 SQLALCHEMY_TRACK_MODIFICATIONS = False
 MAIL_USE_TLS = True
 MAIL_DEBUG = True
