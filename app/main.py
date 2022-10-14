@@ -4,7 +4,6 @@ from functools import lru_cache
 from recommender import unserialize_list
 main = Blueprint("main", __name__)
 
-
 @main.route("/predict",  methods=["GET"])
 @login_required
 def predict():

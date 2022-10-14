@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from flask import Flask, render_template, abort, session, redirect, request, url_for, jsonify
 from flask_admin import Admin, expose, AdminIndexView
 from flask_ckeditor import CKEditor, CKEditorField

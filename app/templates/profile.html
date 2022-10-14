@@ -62,9 +62,9 @@
   </section>
   <script>
     $( function() {
-      var availableTags = [
+      let availableTags = [
           {% for book in books_name %}
-              "{{book}}",
+              "{{book}}".replace("&#39;", "'"),
           {% endfor %}
       ];
       $( "#exampleFormControlInput1" ).autocomplete({
