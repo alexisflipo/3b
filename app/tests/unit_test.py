@@ -45,6 +45,13 @@ data = {
         3: "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1320399351l/1885.jpg",
         4: "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1361039443l/41865.jpg",
     },
+    "bookFormat_encoded": {
+        0: "paper_book",
+        1: "paper_book",
+        2: "ebook",
+        3: "ebook",
+        4: "paper_book",
+    },
 }
 
 
