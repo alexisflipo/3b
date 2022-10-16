@@ -70,6 +70,7 @@ class Books(db.Model):
     likedPercent = db.Column(db.Float)
     coverImg = db.Column(db.String(10000))
     category = db.Column(db.Integer)
+    bookFormat_encoded = db.Column(db.String(255))
 
 
 # Modify admin view

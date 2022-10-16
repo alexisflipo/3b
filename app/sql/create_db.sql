@@ -40,13 +40,14 @@ CREATE TABLE IF NOT EXISTS `books` (
   `genres` varchar(100) DEFAULT NULL,
   `numRatings` float DEFAULT NULL,
   `likedPercent` float DEFAULT NULL,
+  `bookFormat_encoded` varchar(255) DEFAULT NULL,
   `coverImg` varchar(10000) DEFAULT NULL,
   `category` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 									
 
--- LOAD DATA INFILE '/home/books_db.csv'
+-- LOAD DATA INFILE '/home/www/books_db.csv'
 -- INTO TABLE books
 -- FIELDS TERMINATED BY ','
 -- ENCLOSED BY '"'

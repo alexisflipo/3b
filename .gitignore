@@ -3,7 +3,6 @@ mysql-data
 # Edit at https://www.toptal.com/developers/gitignore?templates=flask,python,visualstudiocode
 mysql.env
 web.env
-app/ml/books_db.csv
 ### Flask ###
 .DS_Store
 app/.DS_Store

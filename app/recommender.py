@@ -44,6 +44,7 @@ def preprocess_data(df: pd.DataFrame) -> pd.DataFrame:
             "isbn",
             "title",
             "genres",
+            'bookFormat_encoded'
         ],
         axis=1,
     )
@@ -82,7 +83,7 @@ def generate_df_for_training(encoded_data: np.ndarray):
 
 
 def kmeans_model_elaboration(data: pd.DataFrame):
-    kmeans = KMeans(n_clusters=5, random_state=0).fit(data)
+    kmeans = KMeans(n_clusters=5, random_state=42).fit(data)
     return kmeans
 
 
@@ -140,7 +141,7 @@ def set_experiment_if_not_exists(experiment_name):
 
 def generate_silhouette_img(encoded_data):
     fig = plt.figure(figsize=(15, 10))
-    model = KMeans()
+    model = KMeans(random_state=42)
     visualizer = KElbowVisualizer(model, k=(2, 10), metric="silhouette")
 
     visualizer.fit(encoded_data)  # Fit the data to the visualizer
@@ -151,7 +152,7 @@ def generate_silhouette_img(encoded_data):
 
 def generate_interclusterdistance_img(encoded_data):
     fig = plt.figure(figsize=(15, 10))
-    model = KMeans(5)
+    model = KMeans(5, random_state=42)
     visualizer = InterclusterDistance(model)
     visualizer.fit(encoded_data)  # Fit the data to the visualizer
     visualizer.show()
