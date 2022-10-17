@@ -181,17 +181,14 @@ def main():
         generate_silhouette_img(encoded_data)
         generate_interclusterdistance_img(encoded_data)
         df_kmeans = generate_df_for_training(encoded_data)
-        kmeans = kmeans_model_elaboration(encoded_data)
-        serialize_kmeans(kmeans)
-        score = kmeans.score(df_kmeans)
-        predict(df_copy, df_kmeans, encoded_data, kmeans)
-        nearest_neighbors_modelisation(df_kmeans)
-        insert_to_db(df_copy, user, user_pwd, db)
         try:
             mlflow.set_tracking_uri("https://mlflow-app.beginsbetter.com:80")
-            set_experiment_if_not_exists("books-recommender-1")
-            experiment = mlflow.get_experiment_by_name("books-recommender-1")
+            set_experiment_if_not_exists("books-recommender-prod")
+            experiment = mlflow.get_experiment_by_name("books-recommender-prod")
             with mlflow.start_run(experiment_id=experiment.experiment_id):
+                kmeans = kmeans_model_elaboration(encoded_data)
+                serialize_kmeans(kmeans)
+                score = kmeans.score(df_kmeans)
                 mlflow.log_metric("Score sklearn", score)
                 mlflow.log_artifact("./silhouette.jpg", artifact_path="silhouette")
                 mlflow.log_artifact(
@@ -200,6 +197,9 @@ def main():
                 mlflow.sklearn.log_model(
                     sk_model=kmeans, artifact_path="", registered_model_name="kmeans"
                 )
+            predict(df_copy, df_kmeans, encoded_data, kmeans)
+            nearest_neighbors_modelisation(df_kmeans)
+            insert_to_db(df_copy, user, user_pwd, db)
             send_mail('Training finished successfully')   
         except Exception as e:
             logging.error(traceback.format_exc())
