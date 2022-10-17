@@ -8,8 +8,8 @@ services:
     restart: unless-stopped
     volumes:
       - ./app/:/usr/share/nginx/html
-      - ./beginsbetter.crt:/etc/ssl
-      - ./p8_key.key:/etc/ssl/key
+      - ./beginsbetter.crt:/ssl
+      - ./p8_key.key:/ssl_key
       # - ./data/certbot/conf:/etc/letsencrypt
       # - ./data/certbot/www:/var/www/certbot
     ports:
