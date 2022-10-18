@@ -182,7 +182,7 @@ def main():
         generate_interclusterdistance_img(encoded_data)
         df_kmeans = generate_df_for_training(encoded_data)
         try:
-            mlflow.set_tracking_uri("http://mlflow-app.beginsbetter.com:80")
+            mlflow.set_tracking_uri("https://mlflow-app.beginsbetter.com:80")
             set_experiment_if_not_exists("books-recommender-prod")
             experiment = mlflow.get_experiment_by_name("books-recommender-prod")
             with mlflow.start_run(experiment_id=experiment.experiment_id):
